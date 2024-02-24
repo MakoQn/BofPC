@@ -51,7 +51,10 @@ void reserve(vector *v, size_t newCapacity){
         v->capacity = 0;
 
         return;
-    }else if (newCapacity > v->capacity){
+    }else if (newCapacity < v->capacity){
+        v->size = newCapacity;
+        v->capacity = newCapacity;
+    }else{
         int *a = (int*)malloc(sizeof(int) * (newCapacity - v->capacity));
 
         if (a == NULL){
@@ -59,8 +62,12 @@ void reserve(vector *v, size_t newCapacity){
 
             fprintf(stderr, "bad alloc");
             exit(1);
-        }else
+        }else {
             free(a);
+
+            v->size = newCapacity;
+            v->capacity = newCapacity;
+        }
     }
 
     v->data = realloc(v->data, newCapacity);
