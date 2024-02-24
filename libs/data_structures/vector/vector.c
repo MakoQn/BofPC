@@ -80,4 +80,10 @@ void clear(vector *v){
     *v = createVector(v->capacity);
 }
 
+//освобождает память, выделенную под
+//неиспользуемые элементы.
+void shrinkToFit(vector *v){
+    reserve(v, v->size);
+}
+
 # endif
