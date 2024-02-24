@@ -4,6 +4,7 @@
 # include <stdio.h>
 # include <malloc.h>
 # include <stdint.h>
+# include <stdbool.h>
 
 typedef struct vector {
     int *data; // указатель на элементы вектора
@@ -29,5 +30,10 @@ void shrinkToFit(vector *v);
 //освобождает память, выделенную вектору
 void deleteVector(vector *v);
 
+//проверка на то, является ли вектор пустым
+bool isEmpty(vector *v);
+
+//проверка на то, является ли вектор полным
+bool isFull(vector *v);
 
 # endif

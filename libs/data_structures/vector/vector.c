@@ -4,6 +4,7 @@
 # include <stdio.h>
 # include <malloc.h>
 # include <stdint.h>
+# include <stdbool.h>
 # include "vector.h"
 
 typedef struct vector {
@@ -93,5 +94,14 @@ void deleteVector(vector *v){
     reserve(v, 0);
 }
 
+//проверка на то, является ли вектор пустым
+bool isEmpty(vector *v){
+    return v->size == 0;
+}
+
+//проверка на то, является ли вектор полным
+bool isFull(vector *v){
+    return v->size == v->capacity;
+}
 
 # endif
