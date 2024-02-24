@@ -29,4 +29,5 @@ void shrinkToFit(vector *v);
 //освобождает память, выделенную вектору
 void deleteVector(vector *v);
 
+
 # endif
