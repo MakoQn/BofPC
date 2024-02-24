@@ -39,4 +39,28 @@ vector createVector(size_t capacity){
     }
 };
 
+//изменяет количество памяти выделенное
+//под хранение элементов вектора
+void reserve(vector *v, size_t newCapacity){
+    if (newCapacity == 0){
+        v->data = NULL;
+        v->size = 0;
+        v->capacity = 0;
+
+        return;
+    }else if (newCapacity > v->capacity){
+        int *a = (int*)malloc(sizeof(int) * (newCapacity - v->capacity));
+
+        if (a == NULL){
+            free(a);
+
+            fprintf(stderr, "bad alloc");
+            exit(1);
+        }else
+            free(a);
+    }
+
+    v->data = realloc(v->data, newCapacity);
+}
+
 # endif
