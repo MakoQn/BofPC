@@ -50,6 +50,8 @@ void reserve(vector *v, size_t newCapacity){
         v->size = 0;
         v->capacity = 0;
 
+        free(v->data);
+
         return;
     }else if (newCapacity < v->capacity){
         v->size = newCapacity;
@@ -70,7 +72,7 @@ void reserve(vector *v, size_t newCapacity){
         }
     }
 
-    v->data = realloc(v->data, newCapacity);
+    v->data = (int*)realloc(v->data, newCapacity);
 }
 
 
@@ -85,5 +87,11 @@ void clear(vector *v){
 void shrinkToFit(vector *v){
     reserve(v, v->size);
 }
+
+//освобождает память, выделенную вектору
+void deleteVector(vector *v){
+    reserve(v, 0);
+}
+
 
 # endif

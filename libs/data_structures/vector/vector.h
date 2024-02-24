@@ -23,7 +23,10 @@ void reserve(vector *v, size_t newCapacity);
 void clear(vector *v);
 
 //освобождает память, выделенную под
-//неиспользуемые элементы.
+//неиспользуемые элементы
 void shrinkToFit(vector *v);
+
+//освобождает память, выделенную вектору
+void deleteVector(vector *v);
 
 # endif
