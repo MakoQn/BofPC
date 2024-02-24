@@ -124,4 +124,13 @@ void pushBack(vector *v, int x){
     }
 }
 
+//удаляет последний элемент из вектора
+void popBack(vector *v){
+    if (v->capacity == 0) {
+        fprintf(stderr, "vector is empty");
+        exit(1);
+    }else
+        v->size--;
+}
+
 # endif
