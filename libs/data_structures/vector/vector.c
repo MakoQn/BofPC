@@ -42,6 +42,9 @@ vector createVector(size_t capacity){
 //изменяет количество памяти выделенное
 //под хранение элементов вектора
 void reserve(vector *v, size_t newCapacity){
+    if (newCapacity == v->capacity)
+        return;
+
     if (newCapacity == 0){
         v->data = NULL;
         v->size = 0;
