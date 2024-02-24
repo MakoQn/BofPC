@@ -3,6 +3,7 @@
 # include "E:\C23Exe\libs\data_structures\bitset\bitset.h"
 # include "E:\C23Exe\libs\data_structures\unordered_set\unordered_set.h"
 # include "E:\C23Exe\libs\data_structures\ordered_set\ordered_set.h"
+# include "E:\C23Exe\libs\data_structures\vector\vector.h"
 
 void test_bitset_union1(){
     bitset set1 = bitset_create_from_array((int[]){1, 2}, 2, 3);
