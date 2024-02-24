@@ -104,4 +104,9 @@ bool isFull(vector *v){
     return v->size == v->capacity;
 }
 
+//возвращает i-ый элемент вектора v.
+int getVectorValue(vector *v, size_t i){
+    return v->data[i];
+}
+
 # endif
