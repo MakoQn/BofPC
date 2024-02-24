@@ -36,7 +36,10 @@ bool isEmpty(vector *v);
 //проверка на то, является ли вектор полным
 bool isFull(vector *v);
 
-//возвращает i-ый элемент вектора v.
+//возвращает i-ый элемент вектора v
 int getVectorValue(vector *v, size_t i);
+
+//добавляет элемент x в конец вектора v
+void pushBack(vector *v, int x);
 
 # endif

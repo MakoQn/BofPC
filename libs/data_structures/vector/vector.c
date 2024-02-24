@@ -68,7 +68,6 @@ void reserve(vector *v, size_t newCapacity){
         }else {
             free(a);
 
-            v->size = newCapacity;
             v->capacity = newCapacity;
         }
     }
@@ -104,9 +103,25 @@ bool isFull(vector *v){
     return v->size == v->capacity;
 }
 
-//возвращает i-ый элемент вектора v.
+//возвращает i-ый элемент вектора v
 int getVectorValue(vector *v, size_t i){
     return v->data[i];
+}
+
+//добавляет элемент x в конец вектора v
+void pushBack(vector *v, int x){
+    if (v->capacity == 0){
+        reserve(v, 1);
+        v->data[v->size] = x;
+        v->size++;
+    }else if (v->size == v->capacity){
+        reserve(v, v->capacity * 2);
+        v->data[v->size] = x;
+        v->size++;
+    }else{
+        v->data[v->size] = x;
+        v->size++;
+    }
 }
 
 # endif
