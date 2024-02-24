@@ -11,8 +11,15 @@ typedef struct vector {
     size_t capacity; // вместимость вектора
 } vector;
 
+// возвращает пустой вектор вместимости capacity
 vector createVector(size_t capacity);
 
+//изменяет количество памяти выделенное
+//под хранение элементов вектора
 void reserve(vector *v, size_t newCapacity);
+
+//удаляет элементы из контейнера
+//но не освобождает выделенную память
+void clear(vector *v);
 
 # endif

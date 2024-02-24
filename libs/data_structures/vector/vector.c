@@ -12,7 +12,7 @@ typedef struct vector {
     size_t capacity; // вместимость вектора
 } vector;
 
-// возвращает пустой вектор вместимости capacity
+//возвращает пустой вектор вместимости capacity
 vector createVector(size_t capacity){
     if (capacity == 0)
         return (vector) {
@@ -71,6 +71,13 @@ void reserve(vector *v, size_t newCapacity){
     }
 
     v->data = realloc(v->data, newCapacity);
+}
+
+
+//удаляет элементы из контейнера
+//но не освобождает выделенную память
+void clear(vector *v){
+    *v = createVector(v->capacity);
 }
 
 # endif
