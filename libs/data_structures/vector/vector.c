@@ -135,11 +135,32 @@ void popBack(vector *v){
 
 //возвращает указатель на index-ый элемент вектора
 int* atVector(vector *v, size_t index){
-    if (index > v->size){
+    if (v->size == 0){
+        fprintf(stderr, "vector is empty");
+        exit(1);
+    }else if (index > v->size){
         fprintf(stderr, "%s %d %s", "IndexError: a[", index, "] is not exists");
         exit(1);
     }else
         return &v->data[index];
+}
+
+//возвращает указатель на последний элемент вектора
+int* back(vector *v){
+    if (v->size == 0) {
+        fprintf(stderr, "vector is empty");
+        exit(1);
+    }else
+        return &v->data[--v->size];
+}
+
+//возвращает указатель на нулевой элемент вектора
+int* front(vector *v){
+    if (v->size == 0) {
+        fprintf(stderr, "vector is empty");
+        exit(1);
+    }else
+        return &v->data[0];
 }
 
 # endif
