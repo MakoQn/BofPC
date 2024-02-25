@@ -133,4 +133,13 @@ void popBack(vector *v){
         v->size--;
 }
 
+//возвращает указатель на index-ый элемент вектора
+int* atVector(vector *v, size_t index){
+    if (index > v->size){
+        fprintf(stderr, "%s %d %s", "IndexError: a[", index, "] is not exists");
+        exit(1);
+    }else
+        return &v->data[index];
+}
+
 # endif
