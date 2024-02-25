@@ -70,9 +70,36 @@ void test(){
 }
 
 int main() {
-    test();
+    size_t n;
+    scanf("%zd", &n);
 
-    vectorVoid v;
+    vectorVoid v_float = createVectorV(0, sizeof(float));
+
+    for (int i = 0; i < n; i++) {
+        float x;
+        scanf("%f", &x);
+        pushBackV(&v_float, &x);
+    }
+    for (int i = 0; i < n; i++) {
+        float x;
+        getVectorValueV(&v_float, i, &x);
+        printf("%f ", x);
+    }
+
+    vectorVoid v_int = createVectorV(0, sizeof(int));
+
+    for (int i = 0; i < n; i++) {
+        int x;
+        scanf("%d", &x);
+        pushBackV(&v_int, &x);
+    }
+    for (int i = 0; i < n; i++) {
+        int x;
+        getVectorValueV(&v_int, i, &x);
+        printf("%d ", x);
+    }
+
 
     return 0;
 }
+
