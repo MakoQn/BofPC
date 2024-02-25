@@ -73,7 +73,7 @@ void reserve(vector *v, size_t newCapacity){
         }
     }
 
-    v->data = (int*)realloc(v->data, newCapacity);
+    v->data = (int*)realloc(v->data, sizeof(int) * newCapacity);
 }
 
 
