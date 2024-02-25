@@ -17,6 +17,7 @@ typedef struct vector {
 vector createVector(size_t capacity){
     if (capacity == 0)
         return (vector) {
+                NULL,
                 0,
                 capacity
         };
@@ -126,7 +127,7 @@ void pushBack(vector *v, int x){
 
 //удаляет последний элемент из вектора
 void popBack(vector *v){
-    if (v->capacity == 0) {
+    if (v->size == 0) {
         fprintf(stderr, "vector is empty");
         exit(1);
     }else
