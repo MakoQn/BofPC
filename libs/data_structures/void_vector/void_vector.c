@@ -2,6 +2,7 @@
 #define INC_VOID_VECTOR_H
 
 #include <limits.h>
+#include "void_vector.h"
 
 typedef struct vectorVoid {
     void *data; // указатель на нулевой элемент вектора
