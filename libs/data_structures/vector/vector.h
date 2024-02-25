@@ -12,7 +12,7 @@ typedef struct vector {
     size_t capacity; // вместимость вектора
 } vector;
 
-// возвращает пустой вектор вместимости capacity
+// возвращает пустой вектор вместимостью capacity
 vector createVector(size_t capacity);
 
 //изменяет количество памяти выделенное
