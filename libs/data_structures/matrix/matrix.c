@@ -6,6 +6,8 @@
 # include <stdint.h>
 # include <stdio.h>
 # include <assert.h>
+# include <stdbool.h>
+# include <memory.h>
 
 typedef struct matrix {
     int **values; // элементы матрицы
@@ -116,16 +118,6 @@ void swapColumns(matrix m, int j1, int j2){
     }
 }
 
-//возвращает сумму элементов массива.
-int getSum(int *a, int n){
-    int sum = 0;
-
-    for (int i = 0; i < n; i++)
-        sum += a[i];
-
-    return sum;
-}
-
 // выполняет сортировку вставками строк матрицы m по неубыванию значения функции criteria применяемой для строк.
 void insertionSortRowsMatrixByRowCriteria(matrix m, int (*criteria)(int*, int)){
     int *criteria_array = (int*)malloc(sizeof(int) * m.nRows);
@@ -178,6 +170,51 @@ void selectionSortColsMatrixByColCriteria(matrix m, int (*criteria)(int*, int)){
 
         swapColumns(m, i, minPos);
     }
+}
+
+//возвращает значение ’истина’, если матрица m является квадратной, ложь – в противном случае.
+bool isSquareMatrix(matrix *m){
+    return m->nRows == m->nCols;
+}
+
+// возвращает значение ’истина’, если матрицы m1 и m2 равны, ложь – в противном случае.
+bool areTwoMatricesEqual(matrix *m1, matrix *m2){
+    if (!((m1->nRows == m2->nRows) && (m1->nCols == m2->nCols)))
+        return 0;
+
+    for (int i = 0; i < m1->nRows; i++)
+        if (memcmp(m1->values[i], m2->values[i], sizeof(int) * m1->nCols) != 0)
+            return 0;
+
+    return 1;
+}
+
+//возвращает значение ’истина’, если матрица m является единичной, ложь – в противном случае.
+bool isEMatrix(matrix *m){
+    if (!isSquareMatrix(m))
+        return 0;
+
+    for (int i = 0; i < m->nRows; i++)
+        for (int j = 0; j < m->nCols; j++){
+            if ((i == j && m->values[i][j] != 1) || (i != j && m->values[i][j] != 0))
+                return 0;
+        }
+
+    return 1;
+}
+
+//возвращает значение ’истина’, если матрица m является симметричной, ложь – в противном случае.
+bool isSymmetricMatrix(matrix *m){
+    if (!isSquareMatrix(m))
+        return 0;
+
+    for (int i = 0; i < m->nRows; i++)
+        for (int j = 0; j < m->nCols; j++){
+            if ((i < j) && (m->values[i][j] != m->values[j][i]))
+                return 0;
+        }
+
+    return 1;
 }
 
 # endif
