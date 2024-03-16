@@ -4,4 +4,8 @@ add_library(data_structures
         unordered_set/unordered_set.c
 		vector/vector.c
 	void_vector/void_vector.c
+	matrix/matrix.c
+        matrix/matrix.h
 )
+
+target_link_libraries(data_structures algorithms)
