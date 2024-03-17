@@ -86,4 +86,7 @@ matrix createMatrixFromArray(const int *a, size_t nRows, size_t nCols);
 //в динамической памяти, построенных из элементов массива a
 matrix *createArrayOfMatrixFromArray(const int *values, size_t nMatrices, size_t nRows, size_t nCols);
 
+//проводит автоматизированное тестирование библиотеки
+void test();
+
 # endif
