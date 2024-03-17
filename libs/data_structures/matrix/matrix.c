@@ -217,4 +217,47 @@ bool isSymmetricMatrix(matrix *m){
     return 1;
 }
 
+//транспонирует квадратную матрицу m.
+void transposeSquareMatrix(matrix *m){
+    assert(m->nRows == m->nCols);
+
+    for (int i = 0; i < m->nRows; i++)
+        for (int j = 0; j < m->nCols; j++)
+            if (i != j){
+                int temp = m->values[i][j];
+
+                m->values[i][j] = m->values[j][i];
+                m->values[j][i] = temp;
+            }
+}
+
+//транспонирует матрицу m.
+void transposeMatrix(matrix *m){
+    if (m->nRows == m->nCols)
+        transposeSquareMatrix(m);
+
+    if (m->nRows < m->nCols){
+        m->values = (int*)realloc(m->values, sizeof(int) * m->nCols);
+        m->values[m->nCols - 1] = (int*) calloc(m->nCols, sizeof(int));
+        transposeSquareMatrix(m);
+
+        for (int i = 0; i < m->nCols; i++)
+            m->values[i] = (int*)realloc(m->values[i], sizeof(int) * m->nRows);
+    }else{
+        for (int i = 0; i < m->nRows; i++) {
+            m->values[i] = (int *) realloc(m->values[i], sizeof(int) * m->nRows);
+            m->values[i][m->nRows - 1] = 0;
+        }
+
+        transposeSquareMatrix(m);
+        free(m->values[m->nRows - 1]);
+        m->values = (int*)realloc(m->values, sizeof(int) * m->nCols);
+    }
+
+    int temp = m->nRows;
+
+    m->nRows = m->nCols;
+    m->nCols = temp;
+}
+
 # endif
