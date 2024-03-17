@@ -219,11 +219,11 @@ bool isSymmetricMatrix(matrix *m){
 
 //транспонирует квадратную матрицу m.
 void transposeSquareMatrix(matrix *m){
-    assert(m->nRows == m->nCols);
+    assert(isSquareMatrix(m));
 
     for (int i = 0; i < m->nRows; i++)
         for (int j = 0; j < m->nCols; j++)
-            if (i != j){
+            if (i < j){
                 int temp = m->values[i][j];
 
                 m->values[i][j] = m->values[j][i];
@@ -233,31 +233,44 @@ void transposeSquareMatrix(matrix *m){
 
 //транспонирует матрицу m.
 void transposeMatrix(matrix *m){
-    if (m->nRows == m->nCols)
+    if (isSquareMatrix(m))
         transposeSquareMatrix(m);
 
     if (m->nRows < m->nCols){
         m->values = (int*)realloc(m->values, sizeof(int) * m->nCols);
-        m->values[m->nCols - 1] = (int*) calloc(m->nCols, sizeof(int));
+        for (int i = m->nRows; i < m->nCols; i++)
+            m->values[i] = (int*) calloc(m->nCols, sizeof(int));
+        int temp = m->nRows;
+
+        m->nRows = m->nCols;
+
         transposeSquareMatrix(m);
 
-        for (int i = 0; i < m->nCols; i++)
-            m->values[i] = (int*)realloc(m->values[i], sizeof(int) * m->nRows);
+        m->nCols = temp;
+
+        for (int i = 0; i < m->nRows; i++)
+            m->values[i] = (int *) realloc(m->values[i], sizeof(int) * m->nCols);
     }else{
         for (int i = 0; i < m->nRows; i++) {
             m->values[i] = (int *) realloc(m->values[i], sizeof(int) * m->nRows);
-            m->values[i][m->nRows - 1] = 0;
+
+            for (int j = m->nCols; j < m->nRows; j++)
+                m->values[i][j] = 0;
         }
 
+        int temp = m->nCols;
+
+        m->nCols = m->nRows;
+
         transposeSquareMatrix(m);
-        free(m->values[m->nRows - 1]);
-        m->values = (int*)realloc(m->values, sizeof(int) * m->nCols);
+
+        m->nRows = temp;
+
+        for (int i = m->nRows; i < m->nCols;i++)
+            free(m->values[i]);
+
+        m->values = (int*)realloc(m->values, sizeof(int) * m->nRows);
     }
-
-    int temp = m->nRows;
-
-    m->nRows = m->nCols;
-    m->nCols = temp;
 }
 
 //возвращает позицию минимального элемента матрицы m.
@@ -567,8 +580,6 @@ void test_transposeSquareMatrix() {
     );
 
     transposeSquareMatrix(&m);
-
-    outputMatrix(m);
 
     matrix test_m = createMatrixFromArray(
             (int[]) {
