@@ -92,6 +92,9 @@ int getMax(int *a, int n);
 //возвращает минимальный элемент массива.
 int getMin(int *a, int n);
 
+//возвращает произведение матриц m1 и m2.
+matrix mulMatrices(matrix m1, matrix m2);
+
 //проводит автоматизированное тестирование библиотеки
 void test();
 

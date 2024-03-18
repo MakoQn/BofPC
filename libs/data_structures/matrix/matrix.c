@@ -369,6 +369,39 @@ void sortColsByMinElement(matrix m){
     selectionSortColsMatrixByColCriteria(m, getMin);
 }
 
+//возвращает произведение матриц m1 и m2.
+matrix mulMatrices(matrix m1, matrix m2){
+    matrix mul_m;
+
+    mul_m.nRows = m1.nRows <= m2.nRows ? m1.nRows : m2.nRows;
+    mul_m.nCols = m1.nCols <= m2.nCols ? m1.nCols : m2.nCols;
+
+    mul_m = getMemMatrix(mul_m.nRows, mul_m.nCols);
+
+    for (int i = 0; i < m1.nRows; i++)
+        for (int j = 0; j < m2.nCols; j++){
+            mul_m.values[i][j] = 0;
+
+            for (int k = 0; k < m1.nCols; k++)
+                mul_m.values[i][j] += m1.values[i][k] * m2.values[k][j];
+        }
+
+    return mul_m;
+}
+
+void getSquareOfMatrixIfSymmetric(matrix *m){
+    if (!isSymmetricMatrix(m))
+        return;
+
+    matrix square_m = mulMatrices(*m, *m);
+
+    freeMemMatrix(m);
+
+    *m = square_m;
+
+    freeMemMatrix(&square_m);
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -916,6 +949,87 @@ void test_sortColsByMinElement(){
     test_sortColsByMinElement_minElementsDiff();
 }
 
+void test_getSquareOfMatrixIfSymmetric_symmetric(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    1,2,3,
+                    2,5,6,
+                    3,6,9
+
+            }, 3, 3);
+
+    getSquareOfMatrixIfSymmetric(&m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    14,30,42,
+                    30,65,90,
+                    42,90,126
+
+            }, 3, 3);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_getSquareOfMatrixIfSymmetric_notSymmetric(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    1,2,3,
+                    4,5,6,
+                    7,8,9
+
+            }, 3, 3);
+
+    getSquareOfMatrixIfSymmetric(&m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    14,30,42,
+                    30,65,90,
+                    42,90,126
+
+            }, 3, 3);
+
+    assert(!areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_getSquareOfMatrixIfSymmetric_notSquare(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    1,2,
+                    4,5,
+                    7,8
+
+            }, 3, 2);
+
+    getSquareOfMatrixIfSymmetric(&m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    14,30,42,
+                    30,65,90,
+                    42,90,126
+
+            }, 3, 3);
+
+    assert(!areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_getSquareOfMatrixIfSymmetric(){
+    test_getSquareOfMatrixIfSymmetric_symmetric();
+    test_getSquareOfMatrixIfSymmetric_notSymmetric();
+    test_getSquareOfMatrixIfSymmetric_notSquare();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -932,6 +1046,7 @@ void test(){
     test_swapMaxAndMinRows();
     test_sortRowsByMinElement();
     test_sortColsByMinElement();
+    test_getSquareOfMatrixIfSymmetric();
 }
 
 # endif
