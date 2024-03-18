@@ -125,17 +125,17 @@ void insertionSortRowsMatrixByRowCriteria(matrix m, int (*criteria)(int*, int)){
     for (int i = 0; i < m.nRows; i++)
         criteria_array[i] = criteria(m.values[i], m.nCols);
 
-    for (size_t i = 1; i < m.nRows; i++){
+    for (int i = 1; i < m.nRows; i++){
         int t = criteria_array[i];
         int j = i;
 
         while (j > 0 && criteria_array[j - 1] > t) {
             criteria_array[j] = criteria_array[j - 1];
+            swapRows(m, j, j-1);
             j--;
         }
 
         criteria_array[j] = t;
-        swapRows(m, i, j);
     }
 
     free(criteria_array);
@@ -329,6 +329,14 @@ matrix *createArrayOfMatrixFromArray(const int *values, size_t nMatrices, size_t
                 ms[k].values[i][j] = values[l++];
 
     return ms;
+}
+
+void swapMaxAndMinRows(matrix m){
+    position pos_min = getMinValuePos(m);
+    position pos_max = getMaxValuePos(m);
+
+    if (pos_min.rowIndex != pos_max.rowIndex)
+        swapRows(m, pos_min.rowIndex, pos_max.rowIndex);
 }
 
 void test_swapRows() {
@@ -685,6 +693,61 @@ void test_getMaxValuePos() {
     assert((p.rowIndex == 1) && (p.colIndex == 1));
 
     freeMemMatrix(&m);
+}
+
+void test_swapMaxAndMinRows_maxAndMinInDiffRows(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    1,2,3,
+                    4,5,6,
+                    7,8,9
+
+            }, 3, 3);
+
+    swapMaxAndMinRows(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    7,8,9,
+                    4,5,6,
+                    1,2,3
+
+            }, 3, 3);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_swapMaxAndMinRows_maxAndMinInSameRows(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    1,2,9,
+                    4,5,6,
+                    7,8,3
+
+            }, 3, 3);
+
+    swapMaxAndMinRows(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    1,2,9,
+                    4,5,6,
+                    7,8,3
+
+            }, 3, 3);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_swapMaxAndMinRows(){
+    test_swapMaxAndMinRows_maxAndMinInDiffRows();
+    test_swapMaxAndMinRows_maxAndMinInSameRows();
 }
 
 //проводит автоматизированное тестирование библиотеки
