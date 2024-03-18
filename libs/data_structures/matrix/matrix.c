@@ -354,6 +354,21 @@ void sortRowsByMinElement(matrix m){
     insertionSortRowsMatrixByRowCriteria(m, getMax);
 }
 
+//возвращает минимальный элемент массива.
+int getMin(int *a, int n){
+    int min = INT_MAX;
+
+    for (int i = 0; i < n; i++)
+        if (a[i] < min)
+            min = a[i];
+
+    return min;
+}
+
+void sortColsByMinElement(matrix m){
+    selectionSortColsMatrixByColCriteria(m, getMin);
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -846,6 +861,61 @@ void test_sortRowsByMinElement(){
     test_sortRowsByMinElement_maxElementsSame();
 }
 
+void test_sortColsByMinElement_minElementsSemiDiff(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    3,5,2,4,3,3,
+                    2,5,1,8,2,7,
+                    6,1,4,4,8,3
+
+            }, 3, 6);
+
+    sortColsByMinElement(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    5,2,3,3,3,4,
+                    5,1,2,2,7,8,
+                    1,4,6,8,3,4
+
+            }, 3, 6);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_sortColsByMinElement_minElementsDiff(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    3,5,7,4,9,3,
+                    2,5,6,8,7,7,
+                    6,1,8,4,8,3
+
+            }, 3, 6);
+
+    sortColsByMinElement(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    5,3,3,4,7,9,
+                    5,2,7,8,6,7,
+                    1,6,3,4,8,8
+
+            }, 3, 6);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_sortColsByMinElement(){
+    test_sortColsByMinElement_minElementsSemiDiff();
+    test_sortColsByMinElement_minElementsDiff();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -861,6 +931,7 @@ void test(){
     test_getMaxValuePos();
     test_swapMaxAndMinRows();
     test_sortRowsByMinElement();
+    test_sortColsByMinElement();
 }
 
 # endif

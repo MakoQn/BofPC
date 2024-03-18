@@ -89,6 +89,9 @@ matrix *createArrayOfMatrixFromArray(const int *values, size_t nMatrices, size_t
 //возвращает максимальный элемент массива.
 int getMax(int *a, int n);
 
+//возвращает минимальный элемент массива.
+int getMin(int *a, int n);
+
 //проводит автоматизированное тестирование библиотеки
 void test();
 
