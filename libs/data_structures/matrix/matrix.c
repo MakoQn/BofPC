@@ -339,6 +339,21 @@ void swapMaxAndMinRows(matrix m){
         swapRows(m, pos_min.rowIndex, pos_max.rowIndex);
 }
 
+//возвращает максимальный элемент массива.
+int getMax(int *a, int n){
+    int max = INT_MIN;
+
+    for (int i = 0; i < n; i++)
+        if (a[i] > max)
+            max = a[i];
+
+    return max;
+}
+
+void sortRowsByMinElement(matrix m){
+    insertionSortRowsMatrixByRowCriteria(m, getMax);
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -750,6 +765,87 @@ void test_swapMaxAndMinRows(){
     test_swapMaxAndMinRows_maxAndMinInSameRows();
 }
 
+void test_sortRowsByMinElement_maxElementsDiff(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    7,1,2,
+                    1,8,1,
+                    3,2,3
+
+            }, 3, 3);
+
+    sortRowsByMinElement(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    3,2,3,
+                    7,1,2,
+                    1,8,1
+
+            }, 3, 3);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_sortRowsByMinElement_maxElementsSemiDiff(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    7,1,2,
+                    1,7,1,
+                    3,2,3
+
+            }, 3, 3);
+
+    sortRowsByMinElement(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    3,2,3,
+                    7,1,2,
+                    1,7,1
+
+            }, 3, 3);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_sortRowsByMinElement_maxElementsSame(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    7,1,2,
+                    1,7,1,
+                    7,2,7
+
+            }, 3, 3);
+
+    sortRowsByMinElement(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    7,1,2,
+                    1,7,1,
+                    7,2,7
+
+            }, 3, 3);
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_sortRowsByMinElement(){
+    test_sortRowsByMinElement_maxElementsDiff();
+    test_sortRowsByMinElement_maxElementsSemiDiff();
+    test_sortRowsByMinElement_maxElementsSame();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -763,6 +859,8 @@ void test(){
     test_transposeMatrix();
     test_getMinValuePos();
     test_getMaxValuePos();
+    test_swapMaxAndMinRows();
+    test_sortRowsByMinElement();
 }
 
 # endif
