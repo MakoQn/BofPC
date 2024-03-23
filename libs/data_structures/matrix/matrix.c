@@ -446,6 +446,31 @@ bool isMutuallyInverseMatrices(matrix m1, matrix m2){
     return is_E;
 }
 
+//возвращает максимальный элемент среди a и b.
+int max(int a, int b){
+    return a >= b ? a : b;
+}
+
+long long findSumOfMaxesOfPseudoDiagonal(matrix m){
+    int size_of_array_of_maxes = m.nCols + m.nRows - 2;
+    int *array_of_maxes = (int *) malloc(sizeof(int) * size_of_array_of_maxes);
+
+    for (int i = 0; i < size_of_array_of_maxes; i++)
+        array_of_maxes[i] = INT_MIN;
+
+    for (int i = 0; i < m.nRows; i++)
+        for (int j = 0; j < m.nCols; j++)
+            if (i != j){
+                int diff = abs(i - j - 1);
+                array_of_maxes[diff] = max(m.values[i][j], array_of_maxes[diff]);
+            }
+
+    int sum = getSum(array_of_maxes, size_of_array_of_maxes);
+
+    free(array_of_maxes);
+
+    return sum;
+}
 
 void test_swapRows() {
     matrix m = createMatrixFromArray(
@@ -1180,6 +1205,21 @@ void test_isMutuallyInverseMatrices(){
     test_isMutuallyInverseMatrices_F();
 }
 
+void test_findSumOfMaxesOfPseudoDiagonal(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    3,2,5, 4,
+                    1,3,6, 3,
+                    3,2,1, 2
+            },
+            3, 4
+    );
+
+    assert(findSumOfMaxesOfPseudoDiagonal(m) == 20);
+
+    freeMemMatrix(&m);
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1199,6 +1239,7 @@ void test(){
     test_getSquareOfMatrixIfSymmetric();
     test_transposeIfMatrixHasNotEqualSumOfRows();
     test_isMutuallyInverseMatrices();
+    test_findSumOfMaxesOfPseudoDiagonal();
 }
 
 # endif
