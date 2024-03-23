@@ -434,6 +434,18 @@ void transposeIfMatrixHasNotEqualSumOfRows(matrix m){
     free(sum_array);
 }
 
+bool isMutuallyInverseMatrices(matrix m1, matrix m2){
+    matrix E_M1M2 = mulMatrices(m1, m2);
+    matrix E_M2M1 = mulMatrices(m2, m1);
+
+    bool is_E = isEMatrix(&E_M1M2) && isEMatrix(&E_M2M1);
+
+    freeMemMatrix(&E_M1M2);
+    freeMemMatrix(&E_M2M1);
+
+    return is_E;
+}
+
 
 void test_swapRows() {
     matrix m = createMatrixFromArray(
@@ -1113,6 +1125,61 @@ void test_transposeIfMatrixHasNotEqualSumOfRows(){
     test_transposeIfMatrixHasNotEqualSumOfRows_HasEqualSum();
 }
 
+void test_isMutuallyInverseMatrices_T(){
+    matrix m1 = createMatrixFromArray(
+            (int[]) {
+                    1,0,0,
+                    1,-1,0,
+                    1,0,1
+            },
+            3, 3
+    );
+
+    matrix m2 = createMatrixFromArray(
+            (int[]) {
+                    1,0,0,
+                    1,-1,0,
+                    -1,0,1
+            },
+            3, 3
+    );
+
+    assert(isMutuallyInverseMatrices(m1, m2));
+
+    freeMemMatrix(&m1);
+    freeMemMatrix(&m2);
+}
+
+void test_isMutuallyInverseMatrices_F(){
+    matrix m1 = createMatrixFromArray(
+            (int[]) {
+                    1,0,0,
+                    1,-1,0,
+                    1,0,1
+            },
+            3, 3
+    );
+
+    matrix m2 = createMatrixFromArray(
+            (int[]) {
+                    1,0,0,
+                    1,-1,0,
+                    1,0,1
+            },
+            3, 3
+    );
+
+    assert(!isMutuallyInverseMatrices(m1, m2));
+
+    freeMemMatrix(&m1);
+    freeMemMatrix(&m2);
+}
+
+void test_isMutuallyInverseMatrices(){
+    test_isMutuallyInverseMatrices_T();
+    test_isMutuallyInverseMatrices_F();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1131,6 +1198,7 @@ void test(){
     test_sortColsByMinElement();
     test_getSquareOfMatrixIfSymmetric();
     test_transposeIfMatrixHasNotEqualSumOfRows();
+    test_isMutuallyInverseMatrices();
 }
 
 # endif
