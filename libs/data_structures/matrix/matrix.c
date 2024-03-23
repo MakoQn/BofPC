@@ -402,6 +402,39 @@ void getSquareOfMatrixIfSymmetric(matrix *m){
     freeMemMatrix(&square_m);
 }
 
+//проверка, что все элементы массива уникальны.
+bool isUnique(int *a, int n){
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++)
+            if (a[i] == a[j])
+                return 0;
+
+    return 1;
+}
+
+//возвращает сумму элементов массива.
+int getSum(int *a, int n){
+    int sum = 0;
+
+    for (int i = 0; i < n; i++)
+        sum += a[i];
+
+    return sum;
+}
+
+void transposeIfMatrixHasNotEqualSumOfRows(matrix m){
+    int *sum_array = (int *)(malloc(sizeof(int) * m.nRows));
+
+    for (int i = 0; i < m.nRows; i++)
+        sum_array[i] = getSum(m.values[i], m.nCols);
+
+    if (isUnique(sum_array, m.nRows))
+        transposeSquareMatrix(&m);
+
+    free(sum_array);
+}
+
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -454,15 +487,6 @@ void test_swapColumns() {
 
     freeMemMatrix(&m);
     freeMemMatrix(&test_m);
-}
-
-int getSum(int *a, int n){
-    int sum = 0;
-
-    for (size_t i = 0; i < n; i++)
-        sum += a[i];
-
-    return sum;
 }
 
 void test_insertionSortRowsMatrixByRowCriteria() {
@@ -1030,6 +1054,65 @@ void test_getSquareOfMatrixIfSymmetric(){
     test_getSquareOfMatrixIfSymmetric_notSquare();
 }
 
+void test_transposeIfMatrixHasNotEqualSumOfRows_HasNotEqualSum(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    1,2,3,
+                    4,5,6,
+                    7,8,9
+            },
+            3, 3
+    );
+
+    transposeIfMatrixHasNotEqualSumOfRows(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    1,4,7,
+                    2,5,8,
+                    3,6,9
+            },
+            3, 3
+    );
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_transposeIfMatrixHasNotEqualSumOfRows_HasEqualSum(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    1,2,3,
+                    1,2,3,
+                    7,8,9
+            },
+            3, 3
+    );
+
+    transposeIfMatrixHasNotEqualSumOfRows(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+                    1,2,3,
+                    1,2,3,
+                    7,8,9
+            },
+            3, 3
+    );
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_transposeIfMatrixHasNotEqualSumOfRows(){
+    test_transposeIfMatrixHasNotEqualSumOfRows_HasNotEqualSum();
+    test_transposeIfMatrixHasNotEqualSumOfRows_HasEqualSum();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1047,6 +1130,7 @@ void test(){
     test_sortRowsByMinElement();
     test_sortColsByMinElement();
     test_getSquareOfMatrixIfSymmetric();
+    test_transposeIfMatrixHasNotEqualSumOfRows();
 }
 
 # endif

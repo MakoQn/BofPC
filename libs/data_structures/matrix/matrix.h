@@ -95,6 +95,12 @@ int getMin(int *a, int n);
 //возвращает произведение матриц m1 и m2.
 matrix mulMatrices(matrix m1, matrix m2);
 
+//проверка, что все элементы массива уникальны.
+bool isUnique(long long *a, int n);
+
+//возвращает сумму элементов массива.
+long long getSum(int *a, int n);
+
 //проводит автоматизированное тестирование библиотеки
 void test();
 
