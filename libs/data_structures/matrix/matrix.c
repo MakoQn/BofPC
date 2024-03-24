@@ -571,6 +571,29 @@ int countEqClassesByRowsSum(matrix m){
     return count_of_unique;
 }
 
+int getNSpecialElement(matrix m){
+    int k = 0;
+
+    for (int i = 0; i < m.nCols; i++){
+        int *col_array = (int *) malloc(sizeof(int) * m.nRows);
+
+        for (int j = 0; j < m.nRows; j++)
+            col_array[j] = m.values[j][i];
+
+        int sum = getSum(col_array, m.nRows);
+
+        free(col_array);
+
+        for (int j = 0; j < m.nRows; j++)
+            if (2 * m.values[j][i] > sum){
+                k++;
+                break;
+            }
+    }
+
+    return k;
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1421,6 +1444,60 @@ void test_countEqClassesByRowsSum(){
     test_countEqClassesByRowsSum_zeroSize();
 }
 
+void test_getNSpecialElement_specialElementsExist(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    3,5,5,4,
+                    2,3,6,7,
+                    12,2,1,2
+            },
+            3, 4
+    );
+
+    assert(getNSpecialElement(m) == 2);
+
+    freeMemMatrix(&m);
+}
+
+void test_getNSpecialElement_specialElementsNotExistAllEqual(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    1,1,1,1,
+                    1,1,1,1,
+                    1,1,1,1
+            },
+            3, 4
+    );
+
+    assert(getNSpecialElement(m) == 0);
+
+    freeMemMatrix(&m);
+}
+
+void test_getNSpecialElement_specialElementsExistMaxLessSum(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    7,5,5,4,
+                    6,3,6,7,
+                    12,2,1,4
+            },
+            3, 4
+    );
+
+    assert(getNSpecialElement(m) == 0);
+
+    freeMemMatrix(&m);
+}
+
+void test_getNSpecialElement(){
+    test_getNSpecialElement_specialElementsExist();
+    test_getNSpecialElement_specialElementsNotExistAllEqual();
+    test_getNSpecialElement_specialElementsExistMaxLessSum();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1444,6 +1521,7 @@ void test(){
     test_getMinInArea();
     test_sortByDistances();
     test_countEqClassesByRowsSum();
+    test_getNSpecialElement();
 }
 
 # endif
