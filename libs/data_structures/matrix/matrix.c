@@ -1238,7 +1238,7 @@ void test_getMinInArea_colsOutside(){
     matrix m = createMatrixFromArray(
             (int[]) {
 
-                10,7,5, 6,
+                    10,7,5, 6,
                     3,11,8, 9,
                     4,1,12, 2
             },
