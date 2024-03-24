@@ -9,6 +9,7 @@
 # include <stdbool.h>
 # include <memory.h>
 # include <math.h>
+# include "E:\C23Exe\libs\algorithms\array\array.h"
 
 typedef struct matrix {
     int **values; // элементы матрицы
@@ -521,6 +522,53 @@ void insertionSortRowsMatrixByRowCriteriaF(matrix m, float (*criteria)(int *, in
 
 void sortByDistances(matrix m){
     insertionSortRowsMatrixByRowCriteriaF(m, getDistance);
+}
+
+int cmp_long_long(const void *pa, const void *pb){
+    return *(long long *)pa - *(long long *)pb;
+}
+
+int countNUnique(long long *a, int n){
+    qsort(a, n, sizeof (long long), cmp_long_long);
+
+    int count_of_unique = n == 0 ? 1 : 0 ;
+    int i = 0;
+
+    while (i < n) {
+        int l = 0;
+        int r = n - 1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            if (a[mid] == a[i]) {
+                i = mid;
+                l = mid + 1;
+            }
+            else if (a[mid] > a[i])
+                r = mid - 1;
+            else
+                l = mid + 1;
+        }
+
+        i++;
+        count_of_unique++;
+    }
+
+    return count_of_unique;
+}
+
+int countEqClassesByRowsSum(matrix m){
+    long long *sum_array = (long long *) malloc(sizeof(long long) * m.nRows);
+
+    for (int i = 0; i < m.nRows; i++)
+        sum_array[i] = getSum(m.values[i], m.nCols);
+
+    int count_of_unique = countNUnique(sum_array, m.nRows);
+
+    free(sum_array);
+
+    return count_of_unique;
 }
 
 void test_swapRows() {
@@ -1337,6 +1385,42 @@ void test_sortByDistances(){
     freeMemMatrix(&test_points);
 }
 
+void test_countEqClassesByRowsSum_normalSize(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    7,1,
+                    2,7,
+                    5,4,
+                    4,3,
+                    1,6,
+                    8,0
+            },
+            6, 2
+    );
+
+    assert(countEqClassesByRowsSum(m) == 3);
+
+    freeMemMatrix(&m);
+}
+
+void test_countEqClassesByRowsSum_zeroSize(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+            },
+            0, 0
+    );
+
+    assert(countEqClassesByRowsSum(m) == 1);
+
+    freeMemMatrix(&m);
+}
+
+void test_countEqClassesByRowsSum(){
+    test_countEqClassesByRowsSum_normalSize();
+    test_countEqClassesByRowsSum_zeroSize();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1359,6 +1443,7 @@ void test(){
     test_findSumOfMaxesOfPseudoDiagonal();
     test_getMinInArea();
     test_sortByDistances();
+    test_countEqClassesByRowsSum();
 }
 
 # endif
