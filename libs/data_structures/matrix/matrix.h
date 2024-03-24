@@ -7,6 +7,7 @@
 # include <assert.h>
 # include <stdbool.h>
 # include <memory.h>
+# include <math.h>
 
 typedef struct matrix {
     int **values; // элементы матрицы

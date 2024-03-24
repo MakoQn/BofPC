@@ -8,6 +8,7 @@
 # include <assert.h>
 # include <stdbool.h>
 # include <memory.h>
+# include <math.h>
 
 typedef struct matrix {
     int **values; // элементы матрицы
@@ -118,7 +119,7 @@ void swapColumns(matrix m, int j1, int j2){
     }
 }
 
-// выполняет сортировку вставками строк матрицы m по неубыванию значения функции criteria применяемой для строк.
+//выполняет сортировку вставками строк матрицы m по неубыванию значения функции criteria применяемой для строк.
 void insertionSortRowsMatrixByRowCriteria(matrix m, int (*criteria)(int*, int)){
     int *criteria_array = (int*)malloc(sizeof(int) * m.nRows);
 
@@ -484,6 +485,42 @@ int getMinInArea(matrix m){
                     min = m.values[i][j];
 
     return min;
+}
+
+float getDistance(int *a, int n){
+    float d = 0;
+
+    for (int i = 0; i < n; i++)
+        d += a[i] * a[i];
+
+    return sqrt(d);
+}
+
+//выполняет сортировку вставками строк матрицы m по неубыванию значения функции criteria применяемой для строк(float).
+void insertionSortRowsMatrixByRowCriteriaF(matrix m, float (*criteria)(int *, int)){
+    float *criteria_array = (float*)malloc(sizeof(int) * m.nRows);
+
+    for (int i = 0; i < m.nRows; i++)
+        criteria_array[i] = criteria(m.values[i], m.nCols);
+
+    for (int i = 1; i < m.nRows; i++){
+        float t = criteria_array[i];
+        int j = i;
+
+        while (j > 0 && criteria_array[j - 1] > t) {
+            criteria_array[j] = criteria_array[j - 1];
+            swapRows(m, j, j-1);
+            j--;
+        }
+
+        criteria_array[j] = t;
+    }
+
+    free(criteria_array);
+}
+
+void sortByDistances(matrix m){
+    insertionSortRowsMatrixByRowCriteriaF(m, getDistance);
 }
 
 void test_swapRows() {
@@ -1271,6 +1308,35 @@ void test_getMinInArea(){
     test_getMinInArea_colsInside();
 }
 
+void test_sortByDistances(){
+    matrix points = createMatrixFromArray(
+            (int[]) {
+
+                    7,12,3,
+                    6,8,9,
+                    10,11,5
+            },
+            3, 3
+    );
+
+    sortByDistances(points);
+
+    matrix test_points = createMatrixFromArray(
+            (int[]) {
+
+                    6,8,9,
+                    7,12,3,
+                    10,11,5
+            },
+            3, 3
+    );
+
+    assert(areTwoMatricesEqual(&points, &test_points));
+
+    freeMemMatrix(&points);
+    freeMemMatrix(&test_points);
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1292,6 +1358,7 @@ void test(){
     test_isMutuallyInverseMatrices();
     test_findSumOfMaxesOfPseudoDiagonal();
     test_getMinInArea();
+    test_sortByDistances();
 }
 
 # endif
