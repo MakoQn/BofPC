@@ -9,7 +9,6 @@
 # include <stdbool.h>
 # include <memory.h>
 # include <math.h>
-# include "E:\C23Exe\libs\algorithms\array\array.h"
 
 typedef struct matrix {
     int **values; // элементы матрицы
