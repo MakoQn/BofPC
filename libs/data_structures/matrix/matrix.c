@@ -472,6 +472,20 @@ long long findSumOfMaxesOfPseudoDiagonal(matrix m){
     return sum;
 }
 
+int getMinInArea(matrix m){
+    position pos_of_max = getMaxValuePos(m);
+
+    int min = INT_MAX;
+
+    for (int i = 0; i < pos_of_max.rowIndex; i++)
+        for (int j = 0; j < m.nCols; j++)
+            if ((j >= pos_of_max.colIndex - (pos_of_max.rowIndex - i)) && (j <= pos_of_max.colIndex + (pos_of_max.rowIndex - i)))
+                if (m.values[i][j] < min)
+                    min = m.values[i][j];
+
+    return min;
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1220,6 +1234,43 @@ void test_findSumOfMaxesOfPseudoDiagonal(){
     freeMemMatrix(&m);
 }
 
+void test_getMinInArea_colsOutside(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                10,7,5, 6,
+                    3,11,8, 9,
+                    4,1,12, 2
+            },
+            3, 4
+    );
+
+    assert(getMinInArea(m) == 5);
+
+    freeMemMatrix(&m);
+}
+
+void test_getMinInArea_colsInside(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    6,8,9, 2,
+                    7,12,3, 4,
+                    10,11,5, 1
+            },
+            3, 4
+    );
+
+    assert(getMinInArea(m) == 6);
+
+    freeMemMatrix(&m);
+}
+
+void test_getMinInArea(){
+    test_getMinInArea_colsOutside();
+    test_getMinInArea_colsInside();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1240,6 +1291,7 @@ void test(){
     test_transposeIfMatrixHasNotEqualSumOfRows();
     test_isMutuallyInverseMatrices();
     test_findSumOfMaxesOfPseudoDiagonal();
+    test_getMinInArea();
 }
 
 # endif
