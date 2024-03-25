@@ -677,6 +677,39 @@ void printMatrixWithMaxZeroRows(matrix *ms, int nMatrix){
     }
 }
 
+int getMaxValue(matrix m){
+    int max_value = INT_MIN;
+
+    for (int i = 0; i < m.nRows; i++){
+        int max_of_row = getMax(m.values[i], m.nCols);
+
+        max_value = max(max_of_row, max_value);
+    }
+
+    return max_value;
+}
+
+int min2(int a, int b){
+    return a <= b ? a : b;
+}
+
+void printMatrixWithMinNorm(matrix *ms, int nMatrix){
+    int min_norm = INT_MAX;
+
+    for (int i = 0; i < nMatrix; i++){
+        int norm = getMaxValue(ms[i]);
+
+        min_norm = min2(norm, min_norm);
+    }
+
+    for (int i = 0; i < nMatrix; i++){
+        int norm = getMaxValue(ms[i]);
+
+        if (norm == min_norm)
+            outputMatrix(ms[i]);
+    }
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
