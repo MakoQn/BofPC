@@ -593,6 +593,27 @@ int getNSpecialElement(matrix m){
     return k;
 }
 
+position getLeftMin(matrix m){
+    return getMinValuePos(m);
+}
+
+void swapPenultimateRow(matrix m){
+    position left_min_pos = getLeftMin(m);
+
+    int *col_array = (int *) malloc(sizeof(int) * m.nRows);
+
+    for (int i = 0; i < m.nRows;i++)
+        col_array[i] = m.values[i][left_min_pos.colIndex];
+
+    int pre_last_row = m.nRows - 2;
+
+    for (int i = left_min_pos.colIndex; i <= left_min_pos.colIndex; i++)
+        for (int j = 0; j < m.nRows; j++)
+            m.values[pre_last_row][j] = col_array[j];
+
+    free(col_array);
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1497,6 +1518,69 @@ void test_getNSpecialElement(){
     test_getNSpecialElement_specialElementsExistMaxLessSum();
 }
 
+void test_swapPenultimateRow_minInCol(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    1,2,3,
+                    4,5,6,
+                    7,8,1
+            },
+            3, 3
+    );
+
+    swapPenultimateRow(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+
+                    1,2,3,
+                    1,4,7,
+                    7,8,1
+            },
+            3, 3
+    );
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_swapPenultimateRow_minInPreLastRow(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    2,2,3,
+                    4,5,1,
+                    7,8,9
+            },
+            3, 3
+    );
+
+    swapPenultimateRow(m);
+
+    matrix test_m = createMatrixFromArray(
+            (int[]) {
+
+                    2,2,3,
+                    3,1,9,
+                    7,8,9
+            },
+            3, 3
+    );
+
+    assert(areTwoMatricesEqual(&m, &test_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&test_m);
+}
+
+void test_swapPenultimateRow(){
+    test_swapPenultimateRow_minInCol();
+    test_swapPenultimateRow_minInPreLastRow();
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1521,6 +1605,7 @@ void test(){
     test_sortByDistances();
     test_countEqClassesByRowsSum();
     test_getNSpecialElement();
+    test_swapPenultimateRow();
 }
 
 # endif
