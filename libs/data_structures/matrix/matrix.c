@@ -640,6 +640,43 @@ int countNonDescendingRowsMatrices(matrix *ms, int nMatrix){
     return count_of_matrices;
 }
 
+int countValues(const int *a, int n, int value){
+    int count_of_values = 0;
+
+    for (int i = 0; i < n; i++)
+        if (a[i] == value)
+            count_of_values++;
+
+    return count_of_values;
+}
+
+int countZeroRows(matrix m){
+    int count_of_rows = 0;
+
+    for (int i = 0; i < m.nRows; i++)
+        if (countValues(m.values[i], m.nCols, 0) == m.nCols)
+            count_of_rows++;
+
+    return count_of_rows;
+}
+
+void printMatrixWithMaxZeroRows(matrix *ms, int nMatrix){
+    int max_count_of_zero_rows = INT_MIN;
+
+    for (int i = 0; i < nMatrix; i++){
+        int count_of_zero_rows = countZeroRows(ms[i]);
+
+        max_count_of_zero_rows = max(max_count_of_zero_rows, count_of_zero_rows);
+    }
+
+    for (int i = 0; i < nMatrix; i++){
+        int count_of_zero_rows = countZeroRows(ms[i]);
+
+        if (count_of_zero_rows == max_count_of_zero_rows)
+            outputMatrix(ms[i]);
+    }
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1628,6 +1665,22 @@ void test_countNonDescendingRowsMatrices(){
     freeMemMatrices(ms, 4);
 }
 
+void test_countZeroRows(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    0,0,0,
+                    4,5,0,
+                    7,0,9
+            },
+            3, 3
+    );
+
+    assert(countZeroRows(m) == 1);
+
+    freeMemMatrix(&m);
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1654,6 +1707,7 @@ void test(){
     test_getNSpecialElement();
     test_swapPenultimateRow();
     test_countNonDescendingRowsMatrices();
+    test_countZeroRows();
 }
 
 # endif
