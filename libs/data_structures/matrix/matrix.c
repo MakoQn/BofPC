@@ -614,6 +614,32 @@ void swapPenultimateRow(matrix m){
     free(col_array);
 }
 
+bool isNonDescendingSorted(int *a, int n){
+    for (int i = 0; i < n - 1; i++)
+        if (a[i] > a[i + 1])
+            return 0;
+
+    return 1;
+}
+
+bool hasAllNonDescendingRows(matrix m){
+    for (int i = 0; i < m.nRows; i++)
+        if (isNonDescendingSorted(m.values[i], m.nCols) == 0)
+            return 0;
+
+    return 1;
+}
+
+int countNonDescendingRowsMatrices(matrix *ms, int nMatrix){
+    int count_of_matrices = 0;
+
+    for (int i = 0; i < nMatrix; i++)
+        if (hasAllNonDescendingRows(ms[i]))
+            count_of_matrices++;
+
+    return count_of_matrices;
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1581,6 +1607,27 @@ void test_swapPenultimateRow(){
     test_swapPenultimateRow_minInPreLastRow();
 }
 
+void test_countNonDescendingRowsMatrices(){
+    matrix *ms = createArrayOfMatrixFromArray(
+            (int[]) {
+
+                    7,1,
+                    1,1,
+                    1,6,
+                    2,2,
+                    5,4,
+                    2,3,
+                    1,3,
+                    7,9
+            },
+            4, 2, 2
+    );
+
+    assert(countNonDescendingRowsMatrices(ms, 4) == 2);
+
+    freeMemMatrices(ms, 4);
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1606,6 +1653,7 @@ void test(){
     test_countEqClassesByRowsSum();
     test_getNSpecialElement();
     test_swapPenultimateRow();
+    test_countNonDescendingRowsMatrices();
 }
 
 # endif
