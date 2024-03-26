@@ -710,6 +710,29 @@ void printMatrixWithMinNorm(matrix *ms, int nMatrix){
     }
 }
 
+bool isSpecialElement(int *a, int n, int j){
+    for (int i = j - 1; i >= 0; i--)
+            if (a[i] > a[j])
+                return 0;
+
+    for (int i = j + 1; i < n; i++)
+        if (a[i] < a[j])
+            return 0;
+
+    return 1;
+}
+
+int getNSpecialElement2(matrix m){
+    int count_of_specials = 0;
+
+    for (int i = 0; i < m.nRows; i++)
+        for (int j = 0; j < m.nCols; j++)
+            if (isSpecialElement(m.values[i], m.nCols, j))
+                count_of_specials++;
+
+    return count_of_specials;
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1714,6 +1737,22 @@ void test_countZeroRows(){
     freeMemMatrix(&m);
 }
 
+void test_getNSpecialElement2(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+
+                    2,3,5,5,4,
+                    6,2,3,8,12,
+                    12,12,2,1,2
+            },
+            3, 5
+    );
+
+    assert(getNSpecialElement2(m) == 4);
+
+    freeMemMatrix(&m);
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1741,6 +1780,7 @@ void test(){
     test_swapPenultimateRow();
     test_countNonDescendingRowsMatrices();
     test_countZeroRows();
+    test_getNSpecialElement2();
 }
 
 # endif
