@@ -779,6 +779,26 @@ int getVectorIndexWithMaxAngle(matrix m, int *b) {
     return index_of_vector_max_angle;
 }
 
+long long getScalarProductRowAndCol(matrix m, int i, int j){
+    int *col_array = (int *)malloc(sizeof(int) * m.nRows);
+
+    for (int i = 0; i < m.nRows; i++)
+        col_array[i] = m.values[i][j];
+
+    long long scalar_product = getScalarProduct(m.values[i], col_array, m.nRows);
+
+    free(col_array);
+
+    return scalar_product;
+}
+
+long long getSpecialScalarProduct(matrix m){
+    position max_element = getMaxValuePos(m);
+    position min_element = getMinValuePos(m);
+
+    return getScalarProductRowAndCol(m, max_element.rowIndex, min_element.colIndex);
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1814,6 +1834,21 @@ void test_getVectorIndexWithMaxAngle(){
     freeMemMatrix(&m);
 }
 
+void test_getSpecialScalarProduct(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    2,3,4,
+                    4,10,4,
+                    9,6,1
+            },
+            3, 3
+    );
+
+    assert(getSpecialScalarProduct(m) == 60);
+
+    freeMemMatrix(&m);
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1843,6 +1878,7 @@ void test(){
     test_countZeroRows();
     test_getNSpecialElement2();
     test_getVectorIndexWithMaxAngle();
+    test_getSpecialScalarProduct();
 }
 
 # endif
