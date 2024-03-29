@@ -733,6 +733,52 @@ int getNSpecialElement2(matrix m){
     return count_of_specials;
 }
 
+double getScalarProduct(int *a, int *b, int n){
+    double scalar_product = 0;
+
+    for (int i = 0; i < n; i++)
+        scalar_product += a[i] * b[i];
+
+    return scalar_product;
+}
+
+double getVectorLength(int *a, int n){
+    double vector_length = 0;
+
+    for (int i = 0; i < n; i++)
+        vector_length += a[i] * a[i];
+
+    return sqrt(vector_length);
+}
+
+double getCosine(int *a, int *b, int n){
+    double length_product = (getVectorLength(a, n) * getVectorLength(b, n));
+
+    assert(length_product != 0);
+
+    return getScalarProduct(a, b, n) / length_product;
+}
+
+double absDouble(double a){
+    return a < 0 ? -a : a;
+}
+
+int getVectorIndexWithMaxAngle(matrix m, int *b) {
+    int index_of_vector_max_angle;
+    double min_cos = 2;
+
+    for (int i = 0; i < m.nRows; i++) {
+        double abs_cos = absDouble(getCosine(m.values[i], b, m.nCols));
+
+        if (abs_cos < min_cos) {
+            index_of_vector_max_angle = i;
+            min_cos = abs_cos;
+        }
+    }
+
+    return index_of_vector_max_angle;
+}
+
 void test_swapRows() {
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1753,6 +1799,21 @@ void test_getNSpecialElement2(){
     freeMemMatrix(&m);
 }
 
+void test_getVectorIndexWithMaxAngle(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                3,0,4,
+                4,0,4,
+                10,0,6
+            },
+            3, 3
+    );
+
+    assert(getVectorIndexWithMaxAngle(m,(int[]){1,1,1}) == 2);
+
+    freeMemMatrix(&m);
+}
+
 //проводит автоматизированное тестирование библиотеки
 void test(){
     test_swapRows();
@@ -1781,6 +1842,7 @@ void test(){
     test_countNonDescendingRowsMatrices();
     test_countZeroRows();
     test_getNSpecialElement2();
+    test_getVectorIndexWithMaxAngle();
 }
 
 # endif
