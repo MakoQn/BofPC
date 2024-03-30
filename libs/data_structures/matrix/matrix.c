@@ -1838,6 +1838,24 @@ void test_swapPenultimateRow(){
     test_swapPenultimateRow_minInPreLastRow();
 }
 
+void test_isNonDescendingSorted_NonDescending(){
+    assert(isNonDescendingSorted((int []){1,2,3,3,3,4}, 6));
+}
+
+void test_isNonDescendingSorted_NonAscending(){
+    assert(!isNonDescendingSorted((int []){4,3,3,2,1}, 5));
+}
+
+void test_isNonDescendingSorted_notSorted(){
+    assert(!isNonDescendingSorted((int []){4,6,3,2,1}, 5));
+}
+
+void test_isNonDescendingSorted(){
+    test_isNonDescendingSorted_NonDescending();
+    test_isNonDescendingSorted_NonAscending();
+    test_isNonDescendingSorted_notSorted();
+}
+
 void test_countNonDescendingRowsMatrices(){
     matrix *ms = createArrayOfMatrixFromArray(
             (int[]) {
@@ -1954,6 +1972,7 @@ void test(){
     test_countEqClassesByRowsSum();
     test_getNSpecialElement();
     test_swapPenultimateRow();
+    test_isNonDescendingSorted();
     test_countNonDescendingRowsMatrices();
     test_countZeroRows();
     test_getNSpecialElement2();
