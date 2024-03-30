@@ -1893,6 +1893,19 @@ void test_countZeroRows(){
     freeMemMatrix(&m);
 }
 
+void test_min2_different(){
+    assert(min2(1,2) == 1);
+}
+
+void test_min2_equal(){
+    assert(min2(1,1) == 1);
+}
+
+void test_min2(){
+    test_min2_different();
+    test_min2_equal();
+}
+
 void test_getNSpecialElement2(){
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1975,6 +1988,7 @@ void test(){
     test_isNonDescendingSorted();
     test_countNonDescendingRowsMatrices();
     test_countZeroRows();
+    test_min2();
     test_getNSpecialElement2();
     test_getVectorIndexWithMaxAngle();
     test_getSpecialScalarProduct();
