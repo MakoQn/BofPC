@@ -1648,6 +1648,10 @@ void test_getMinInArea(){
     test_getMinInArea_colsInside();
 }
 
+void test_getDistance(){
+    assert(getDistance((int []){4,0,3},3) == 5);
+}
+
 void test_sortByDistances(){
     matrix points = createMatrixFromArray(
             (int[]) {
@@ -1940,6 +1944,7 @@ void test(){
     test_max();
     test_findSumOfMaxesOfPseudoDiagonal();
     test_getMinInArea();
+    test_getDistance();
     test_sortByDistances();
     test_countEqClassesByRowsSum();
     test_getNSpecialElement();
