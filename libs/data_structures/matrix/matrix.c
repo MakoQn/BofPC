@@ -1922,6 +1922,18 @@ void test_getNSpecialElement2(){
     freeMemMatrix(&m);
 }
 
+void test_getScalarProduct(){
+    assert(getScalarProduct((int []){1, 2, 3}, (int []){1, 1, 1}, 3) == 6);
+}
+
+void test_getVectorLength(){
+    assert(getVectorLength((int []){4, 0, 6}, 3) == 5);
+}
+
+void test_getCosine(){
+    assert(getCosine((int []){2, 2, 3}, (int []){1, 1, 1}, 3) - 0.98 < 0.001);
+}
+
 void test_getVectorIndexWithMaxAngle(){
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1990,6 +2002,9 @@ void test(){
     test_countZeroRows();
     test_min2();
     test_getNSpecialElement2();
+    test_getScalarProduct();
+    test_getVectorLength();
+    test_getCosine();
     test_getVectorIndexWithMaxAngle();
     test_getSpecialScalarProduct();
 }
