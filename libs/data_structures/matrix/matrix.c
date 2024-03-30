@@ -1276,6 +1276,10 @@ void test_sortRowsByMinElement_maxElementsSame(){
     freeMemMatrix(&test_m);
 }
 
+void test_getMax(){
+    assert(getMax((int []){1,2,3}, 3) == 3);
+}
+
 void test_sortRowsByMinElement(){
     test_sortRowsByMinElement_maxElementsDiff();
     test_sortRowsByMinElement_maxElementsSemiDiff();
@@ -1863,6 +1867,7 @@ void test(){
     test_getMinValuePos();
     test_getMaxValuePos();
     test_swapMaxAndMinRows();
+    test_getMax();
     test_sortRowsByMinElement();
     test_sortColsByMinElement();
     test_getSquareOfMatrixIfSymmetric();
