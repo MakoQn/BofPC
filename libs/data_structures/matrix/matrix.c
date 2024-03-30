@@ -1420,6 +1420,32 @@ void test_getSquareOfMatrixIfSymmetric_notSquare(){
     freeMemMatrix(&test_m);
 }
 
+void test_mulMatrices(){
+    matrix m1 = createMatrixFromArray(
+            (int[]) {
+                    1,2,3,
+                    4,5,6,
+                    7,8,9
+
+            }, 3, 2);
+
+    matrix m2 = createMatrixFromArray(
+            (int[]) {
+                    1,0,0,
+                    0,1,0,
+                    0,0,1
+
+            }, 3, 3);
+
+    matrix test_m = mulMatrices(m1,m2);
+
+    assert(areTwoMatricesEqual(&test_m, &m1));
+
+    freeMemMatrix(&m1);
+    freeMemMatrix(&m2);
+    freeMemMatrix(&test_m);
+}
+
 void test_getSquareOfMatrixIfSymmetric(){
     test_getSquareOfMatrixIfSymmetric_symmetric();
     test_getSquareOfMatrixIfSymmetric_notSymmetric();
@@ -1875,6 +1901,7 @@ void test(){
     test_sortRowsByMinElement();
     test_getMin();
     test_sortColsByMinElement();
+    test_mulMatrices();
     test_getSquareOfMatrixIfSymmetric();
     test_transposeIfMatrixHasNotEqualSumOfRows();
     test_isMutuallyInverseMatrices();
