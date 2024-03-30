@@ -1712,6 +1712,10 @@ void test_countEqClassesByRowsSum_zeroSize(){
     freeMemMatrix(&m);
 }
 
+void test_countNUnique(){
+    assert(countNUnique((long long []){1,2,3,3,3}, 5) == 3);
+}
+
 void test_countEqClassesByRowsSum(){
     test_countEqClassesByRowsSum_normalSize();
     test_countEqClassesByRowsSum_zeroSize();
@@ -1946,6 +1950,7 @@ void test(){
     test_getMinInArea();
     test_getDistance();
     test_sortByDistances();
+    test_countNUnique();
     test_countEqClassesByRowsSum();
     test_getNSpecialElement();
     test_swapPenultimateRow();
