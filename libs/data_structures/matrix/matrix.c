@@ -2004,7 +2004,7 @@ void test(){
     test_getNSpecialElement2();
     test_getScalarProduct();
     test_getVectorLength();
-    test_getCosine();
+    test_getCosine(;
     test_getVectorIndexWithMaxAngle();
     test_getSpecialScalarProduct();
 }
