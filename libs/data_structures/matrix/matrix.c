@@ -1506,6 +1506,23 @@ void test_transposeIfMatrixHasNotEqualSumOfRows_HasEqualSum(){
     freeMemMatrix(&test_m);
 }
 
+void test_isUnique_unique(){
+    assert(isUnique((int []){1,2,3}, 3));
+}
+
+void test_isUnique_nonUnique(){
+    assert(!isUnique((int []){1,2,2}, 3));
+}
+
+void test_isUnique(){
+    test_isUnique_unique();
+    test_isUnique_nonUnique();
+}
+
+void test_getSum(){
+    assert(getSum((int []){1,2,3}, 3) == 6);
+}
+
 void test_transposeIfMatrixHasNotEqualSumOfRows(){
     test_transposeIfMatrixHasNotEqualSumOfRows_HasNotEqualSum();
     test_transposeIfMatrixHasNotEqualSumOfRows_HasEqualSum();
@@ -1903,6 +1920,8 @@ void test(){
     test_sortColsByMinElement();
     test_mulMatrices();
     test_getSquareOfMatrixIfSymmetric();
+    test_isUnique();
+    test_getSum();
     test_transposeIfMatrixHasNotEqualSumOfRows();
     test_isMutuallyInverseMatrices();
     test_findSumOfMaxesOfPseudoDiagonal();
