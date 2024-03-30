@@ -1949,6 +1949,21 @@ void test_getVectorIndexWithMaxAngle(){
     freeMemMatrix(&m);
 }
 
+void test_getScalarProductRowAndCol(){
+    matrix m = createMatrixFromArray(
+            (int[]) {
+                    3,1,4,
+                    4,1,4,
+                    10,1,6
+            },
+            3, 3
+    );
+
+    assert(getScalarProductRowAndCol(m, 2, 1) == 56);
+
+    freeMemMatrix(&m);
+}
+
 void test_getSpecialScalarProduct(){
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -2006,6 +2021,7 @@ void test(){
     test_getVectorLength();
     test_getCosine();
     test_getVectorIndexWithMaxAngle();
+    test_getScalarProductRowAndCol();
     test_getSpecialScalarProduct();
 }
 
