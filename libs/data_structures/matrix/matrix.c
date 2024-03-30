@@ -1583,6 +1583,19 @@ void test_isMutuallyInverseMatrices(){
     test_isMutuallyInverseMatrices_F();
 }
 
+void test_max_different(){
+    assert(max(1,2) == 2);
+}
+
+void test_max_equal(){
+    assert(max(2,2) == 2);
+}
+
+void test_max(){
+    test_max_different();
+    test_max_equal();
+}
+
 void test_findSumOfMaxesOfPseudoDiagonal(){
     matrix m = createMatrixFromArray(
             (int[]) {
@@ -1924,6 +1937,7 @@ void test(){
     test_getSum();
     test_transposeIfMatrixHasNotEqualSumOfRows();
     test_isMutuallyInverseMatrices();
+    test_max();
     test_findSumOfMaxesOfPseudoDiagonal();
     test_getMinInArea();
     test_sortByDistances();
