@@ -2,6 +2,8 @@
 # define STRING_H
 
 # include <assert.h>
+# include <ctype.h>
+# include <stdio.h>
 
 //нахождение длины строки
 int findLength(const char *str) {
@@ -64,10 +66,155 @@ void test_strlen_(){
     test_strlen__notNoSymbols();
 }
 
+//возвращает указатель на первый элемент с кодом ch, расположенным на ленте памяти между
+//адресами begin и end не включая end. Если символ не найден, возвращается значение end.
+char* find(char *begin, char *end, int ch) {
+    while (begin != end && *begin != ch)
+        begin++;
+
+    return begin;
+}
+
+//возвращает указатель на первый
+//символ, отличный от пробельных, расположенный на ленте памяти, начиная с begin и заканчивая ноль-символом.
+// Если символ не найден, возвращается адрес первого ноль-символа
+char* findNonSpace(char *begin){
+    while (*begin != '\0' && isspace(*begin))
+        begin++;
+
+    return begin;
+}
+
+void test_findNonSpace_noSymbols(){
+    char s[] = "   ";
+
+    assert(*findNonSpace(s) == '\0');
+}
+
+void test_findNonSpace_noSpaces(){
+    char s[] = "Hello";
+
+    assert(*findNonSpace(s) == 'H');
+}
+
+void test_findNonSpace_spacesAndSymbols(){
+    char s[] = " Hel lo";
+
+    assert(*findNonSpace(s) == 'H');
+}
+
+void test_findNonSpace(){
+    test_findNonSpace_noSymbols();
+    test_findNonSpace_noSpaces();
+    test_findNonSpace_spacesAndSymbols();
+}
+
+char* findSpace(char *begin){
+    while (*begin != '\0' && !isspace(*begin))
+        begin++;
+
+    return begin;
+}
+
+void test_findSpace_noSymbols(){
+    char s[] = "  ";
+
+    assert(findSpace(s) == &s[0]);
+}
+
+void test_findSpace_noSpaces(){
+    char s[] = "Hello";
+
+    assert(*findSpace(s) == '\0');
+}
+
+void test_findSpace_spacesAndSymbols(){
+    char s[] = "Hel lo";
+
+    assert(findSpace(s) == &s[3]);
+}
+
+void test_findSpace(){
+    test_findSpace_noSymbols();
+    test_findSpace_noSpaces();
+    test_findSpace_spacesAndSymbols();
+}
+
+//возвращает указатель на первый справа символ, отличный от пробельных,
+//расположенный на ленте памяти, начиная с rbegin (последний символ
+//строки, за которым следует ноль-символ) и заканчивая rend (адрес символа перед началом строки). Если символ не найден, возвращается адрес rend.
+char* findNonSpaceReverse(char *rbegin, const char *rend){
+    while(rbegin > rend && isspace(*rbegin))
+        rbegin--;
+
+    return rbegin;
+}
+
+void test_findNonSpaceReverse_noSymbols(){
+    char s[] = "  ";
+
+    assert(*findNonSpaceReverse(&s[1], &s[0]) == s[0]);
+}
+
+void test_findNonSpaceReverse_noSpaces(){
+    char s[] = "Hello";
+
+    assert(*findNonSpaceReverse(&s[4], &s[0]) == 'o');
+}
+
+void test_findNonSpaceReverse_spacesAndSymbols(){
+    char s[] = "Hel lo ";
+
+    assert(*findNonSpaceReverse(&s[5], &s[0]) == 'o');
+}
+
+void test_findNonSpaceReverse(){
+    test_findNonSpaceReverse_noSymbols();
+    test_findNonSpaceReverse_noSpaces();
+    test_findNonSpaceReverse_spacesAndSymbols();
+}
+
+//возвращает указатель на первый пробельный символ справа, расположенный на ленте памяти, начиная с rbegin и заканчивая rend. Если символ не найден,
+//возвращается адрес rend.
+char* findSpaceReverse(char *rbegin, const char *rend){
+    while(rbegin > rend && !isspace(*rbegin))
+        rbegin--;
+
+    return rbegin;
+}
+
+void test_findSpaceReverse_noSymbols(){
+    char s[] = "  ";
+
+    assert(*findSpaceReverse(&s[1], &s[0]) == s[1]);
+}
+
+void test_findSpaceReverse_noSpaces(){
+    char s[] = "Hello";
+
+    assert(*findSpaceReverse(&s[4], &s[0]) == s[0]);
+}
+
+void test_findSpaceReverse_spacesAndSymbols(){
+    char s[] = " Hel lo";
+
+    assert(*findSpaceReverse(&s[6], &s[0]) == s[4]);
+}
+
+void test_findSpaceReverse(){
+    test_findSpaceReverse_noSymbols();
+    test_findSpaceReverse_noSpaces();
+    test_findSpaceReverse_spacesAndSymbols();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
     test_strlen_();
+    test_findNonSpace();
+    test_findSpace();
+    test_findNonSpaceReverse();
+    test_findSpaceReverse();
 }
 
 # endif
