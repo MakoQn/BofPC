@@ -4,7 +4,6 @@
 # include <assert.h>
 # include <ctype.h>
 # include <memory.h>
-# include <stdio.h>
 
 //нахождение длины строки
 int findLength(const char *str) {
