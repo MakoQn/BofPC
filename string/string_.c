@@ -245,11 +245,27 @@ void test_strcmp_moreMemThanNeeded(){
     assert(strcmp(s1, s2) != 0);
 }
 
+void test_strcmp_positive(){
+    char s1[] = "bb";
+    char s2[] = "aa";
+
+    assert(strcmp(s1, s2) > 0);
+}
+
+void test_strcmp_negative(){
+    char s1[] = "aa";
+    char s2[] = "bb";
+
+    assert(strcmp(s1, s2) < 0);
+}
+
 void test_strcmp(){
     test_strcmp_noSymbolsEqual();
     test_strcmp_noSpacesEqual();
     test_strcmp_spacesAndSymbols();
     test_strcmp_moreMemThanNeeded();
+    test_strcmp_positive();
+    test_strcmp_negative();
 }
 
 //тестирует функции, написанные выше
