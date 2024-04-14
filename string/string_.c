@@ -4,6 +4,8 @@
 # include <assert.h>
 # include <ctype.h>
 # include <stdio.h>
+# include <memory.h>
+# include <ctype.h>
 
 //нахождение длины строки
 int findLength(const char *str) {
@@ -268,6 +270,105 @@ void test_strcmp(){
     test_strcmp_negative();
 }
 
+//записывает по адресу beginDestination фрагмент памяти, начиная с адреса beginSource до endSource.
+//Возвращает указатель на следующий свободный фрагмент памяти в destination
+char* copy(const char *beginSource, const char *endSource, char *beginDestination){
+    int size = endSource - beginSource;
+
+    memcpy(beginDestination, beginSource, size);
+
+    return beginDestination + size;
+}
+
+void test_copy_wholeWord(){
+    char s[] = "Hello";
+    char s_dist[10];
+
+    assert(copy(&s[0], &s[5], s_dist) == &s_dist[5]);
+}
+
+void test_copy_halfWord(){
+    char s[] = "Hello";
+    char s_dist[10];
+
+    assert(copy(&s[0], &s[3], s_dist) == &s_dist[3]);
+}
+
+void test_copy_notEmptyDist(){
+    char s[] = "Hello";
+    char s_dist[11] = "Hello";
+    char s_cmp[11] = "HelloHello";
+
+    copy(&s[0], &s[5], &s_dist[5]);
+
+    assert(strcmp(s_dist, s_cmp) == 0);
+}
+
+void test_copy_notEmptyDistReplaceHalfWord(){
+    char s[] = "Hello";
+    char s_dist[11] = "Hello";
+    char s_cmp[11] = "HelHello";
+
+    copy(&s[0], &s[5], &s_dist[3]);
+
+    assert(strcmp(s_dist, s_cmp) == 0);
+}
+
+void test_copy(){
+    test_copy_wholeWord();
+    test_copy_halfWord();
+    test_copy_notEmptyDist();
+    test_copy_notEmptyDistReplaceHalfWord();
+}
+
+//записывает по адресу beginDestination элементы из фрагмента памяти начиная с beginSource заканчивая endSource, удовлетворяющие функции-предикату f.
+//Функция возвращает указатель на следующий свободный для записи фрагмент в памяти
+char* copyIf(char *beginSource, const char *endSource, char *beginDestination, int (*f)(int)){
+    while (*beginSource++ < *endSource)
+        if (f(*beginSource))
+            memcpy(beginDestination, beginSource, sizeof *beginSource);
+
+    return beginDestination + (endSource - beginSource);
+}
+
+void test_copyIf_ifDigit(){
+    char s[] = "5He6l7lo8";
+    char s_dist[10];
+    char s_cmp[10] = "5678";
+
+    copyIf(&s[0], &s[9], s_dist, isdigit);
+
+    assert(strcmp(s_dist, s_cmp) == 0);
+}
+
+void test_copyIf(){
+    test_copyIf_ifDigit();
+}
+
+//записывает по адресу beginDestination элементы из фрагмента памяти начиная с rbeginSource заканчивая rendSource,
+//удовлетворяющие функции-предикату f. Функция возвращает значение beginDestination по окончанию работы функции.
+char* copyIfReverse(char *rbeginSource, const char *rendSource, char *beginDestination, int (*f)(int)){
+    while (*rbeginSource-- > *rendSource)
+        if (f(*rbeginSource))
+            memcpy(beginDestination, rbeginSource, sizeof *rbeginSource);
+
+    return beginDestination + (rbeginSource - rendSource);
+}
+
+void test_copyIfReverse_ifDigit(){
+    char s[] = "5He6l7lo8";
+    char s_dist[10];
+    char s_cmp[10] = "8765";
+
+    copyIfReverse(&s[0], &s[9], s_dist, isdigit);
+
+    assert(strcmp(s_dist, s_cmp) == 0);
+}
+
+void test_copyIfReverse(){
+    test_copyIfReverse_ifDigit();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -277,6 +378,9 @@ void test(){
     test_findNonSpaceReverse();
     test_findSpaceReverse();
     test_strcmp();
+    test_copy();
+    test_copyIf();
+    test_copyIfReverse();
 }
 
 # endif
