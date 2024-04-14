@@ -4,6 +4,7 @@
 # include <assert.h>
 # include <ctype.h>
 # include <memory.h>
+# include <stdio.h>
 
 //нахождение длины строки
 int findLength(const char *str) {
@@ -73,6 +74,23 @@ char* find(char *begin, char *end, int ch) {
         begin++;
 
     return begin;
+}
+
+void test_find_T(){
+    char s[] = "123456";
+
+    assert(*find(&s[0], &s[4], (int)'3') == s[2]);
+}
+
+void test_find_F(){
+    char s[] = "123456";
+
+    assert(*find(&s[0], &s[3], (int)'7') != s[2]);
+}
+
+void test_find(){
+    test_find_T();
+    test_find_F();
 }
 
 //возвращает указатель на первый
@@ -371,6 +389,7 @@ void test_copyIfReverse(){
 void test(){
     test_findLength();
     test_strlen_();
+    test_find();
     test_findNonSpace();
     test_findSpace();
     test_findNonSpaceReverse();
