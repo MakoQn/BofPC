@@ -207,6 +207,43 @@ void test_findSpaceReverse(){
     test_findSpaceReverse_spacesAndSymbols();
 }
 
+//сравнение строк, если строки раны - возвращает 0, или если lhs распологается до rhs - отрицательное значение, иначе положительное значение
+int strcmp(const char *lhs, const char *rhs){
+    int diff = 0;
+
+    while (*lhs++ && *rhs++ && diff == 0)
+        diff += *lhs - *rhs;
+
+    return diff;
+}
+
+void test_strcmp_noSymbolsEqual(){
+    char s1[] = "  ";
+    char s2[] = "  ";
+
+    assert(strcmp(s1, s2) == 0);
+}
+
+void test_strcmp_noSpacesEqual(){
+    char s1[] = "Hello";
+    char s2[] = "Hello";
+
+    assert(strcmp(s1, s2) == 0);
+}
+
+void test_strcmp_spacesAndSymbols(){
+    char s1[] = "Hello";
+    char s2[] = " Hel lo";
+
+    assert(strcmp(s1, s2) != 0);
+}
+
+void test_strcmp(){
+    test_strcmp_noSymbolsEqual();
+    test_strcmp_noSpacesEqual();
+    test_strcmp_spacesAndSymbols();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -215,6 +252,7 @@ void test(){
     test_findSpace();
     test_findNonSpaceReverse();
     test_findSpaceReverse();
+    test_strcmp();
 }
 
 # endif

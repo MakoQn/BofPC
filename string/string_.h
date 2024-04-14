@@ -28,6 +28,9 @@ char* findNonSpaceReverse(char *rbegin, const char *rend);
 //возвращается адрес rend.
 char* findSpaceReverse(char *rbegin, const char *rend);
 
+//сравнение строк, если строки раны - возвращает 0, или если lhs распологается до rhs - отрицательное значение, иначе положительное значение
+int strcmp(const char *lhs, const char *rhs);
+
 //тестирует функции, написанные выше
 void test();
 
