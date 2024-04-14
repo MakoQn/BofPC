@@ -238,10 +238,18 @@ void test_strcmp_spacesAndSymbols(){
     assert(strcmp(s1, s2) != 0);
 }
 
+void test_strcmp_moreMemThanNeeded(){
+    char s1[10] = "Hello";
+    char s2[15] = " Hel lo";
+
+    assert(strcmp(s1, s2) != 0);
+}
+
 void test_strcmp(){
     test_strcmp_noSymbolsEqual();
     test_strcmp_noSpacesEqual();
     test_strcmp_spacesAndSymbols();
+    test_strcmp_moreMemThanNeeded();
 }
 
 //тестирует функции, написанные выше
