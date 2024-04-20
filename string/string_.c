@@ -1,9 +1,14 @@
 # ifndef STRING_H
 # define STRING_H
 
+#define ASSERT_STRING(expected, got) assertString(expected, got, \
+__FILE__, __FUNCTION__, __LINE__)
+
+
 # include <assert.h>
 # include <ctype.h>
 # include <memory.h>
+# include <stdio.h>
 
 //нахождение длины строки
 int findLength(const char *str) {
@@ -225,7 +230,7 @@ void test_findSpaceReverse(){
 }
 
 //сравнение строк, если строки раны - возвращает 0, или если lhs распологается до rhs - отрицательное значение, иначе положительное значение
-int strcmp(const char *lhs, const char *rhs){
+int strcmp_(const char *lhs, const char *rhs){
     int diff = 0;
 
     while (*lhs++ && *rhs++ && diff == 0)
@@ -238,42 +243,42 @@ void test_strcmp_noSymbolsEqual(){
     char s1[] = "  ";
     char s2[] = "  ";
 
-    assert(strcmp(s1, s2) == 0);
+    assert(strcmp_(s1, s2) == 0);
 }
 
 void test_strcmp_noSpacesEqual(){
     char s1[] = "Hello";
     char s2[] = "Hello";
 
-    assert(strcmp(s1, s2) == 0);
+    assert(strcmp_(s1, s2) == 0);
 }
 
 void test_strcmp_spacesAndSymbols(){
     char s1[] = "Hello";
     char s2[] = " Hel lo";
 
-    assert(strcmp(s1, s2) != 0);
+    assert(strcmp_(s1, s2) != 0);
 }
 
 void test_strcmp_moreMemThanNeeded(){
     char s1[10] = "Hello";
     char s2[15] = " Hel lo";
 
-    assert(strcmp(s1, s2) != 0);
+    assert(strcmp_(s1, s2) != 0);
 }
 
 void test_strcmp_positive(){
     char s1[] = "bb";
     char s2[] = "aa";
 
-    assert(strcmp(s1, s2) > 0);
+    assert(strcmp_(s1, s2) > 0);
 }
 
 void test_strcmp_negative(){
     char s1[] = "aa";
     char s2[] = "bb";
 
-    assert(strcmp(s1, s2) < 0);
+    assert(strcmp_(s1, s2) < 0);
 }
 
 void test_strcmp(){
@@ -316,7 +321,7 @@ void test_copy_notEmptyDist(){
 
     copy(&s[0], &s[5], &s_dist[5]);
 
-    assert(strcmp(s_dist, s_cmp) == 0);
+    assert(strcmp_(s_dist, s_cmp) == 0);
 }
 
 void test_copy_notEmptyDistReplaceHalfWord(){
@@ -326,7 +331,7 @@ void test_copy_notEmptyDistReplaceHalfWord(){
 
     copy(&s[0], &s[5], &s_dist[3]);
 
-    assert(strcmp(s_dist, s_cmp) == 0);
+    assert(strcmp_(s_dist, s_cmp) == 0);
 }
 
 void test_copy(){
@@ -343,7 +348,7 @@ char* copyIf(char *beginSource, const char *endSource, char *beginDestination, i
         if (f(*beginSource))
             memcpy(beginDestination, beginSource, sizeof *beginSource);
 
-    return beginDestination + (endSource - beginSource);
+    return beginDestination;
 }
 
 void test_copyIf_ifDigit(){
@@ -353,7 +358,7 @@ void test_copyIf_ifDigit(){
 
     copyIf(&s[0], &s[9], s_dist, isdigit);
 
-    assert(strcmp(s_dist, s_cmp) == 0);
+    assert(strcmp_(s_dist, s_cmp) == 0);
 }
 
 void test_copyIf(){
@@ -367,7 +372,7 @@ char* copyIfReverse(char *rbeginSource, const char *rendSource, char *beginDesti
         if (f(*rbeginSource))
             memcpy(beginDestination, rbeginSource, sizeof *rbeginSource);
 
-    return beginDestination + (rbeginSource - rendSource);
+    return beginDestination;
 }
 
 void test_copyIfReverse_ifDigit(){
@@ -377,11 +382,83 @@ void test_copyIfReverse_ifDigit(){
 
     copyIfReverse(&s[0], &s[9], s_dist, isdigit);
 
-    assert(strcmp(s_dist, s_cmp) == 0);
+    assert(strcmp_(s_dist, s_cmp) == 0);
 }
 
 void test_copyIfReverse(){
     test_copyIfReverse_ifDigit();
+}
+
+char* getEndOfString(char *s){
+    return &s[strlen_(s)];
+}
+
+void removeNonLetters(char *s) {
+    char *endSource = getEndOfString(s);
+    char *destination = copyIf(s, endSource, s, isgraph);
+    *destination = '\0';
+}
+
+void assertString(const char *expected, char *got,
+                  char const *fileName, char const *funcName,
+                  int line) {
+    if (strcmp_(expected, got)) {
+        fprintf(stderr, "File %s\n", fileName);
+        fprintf(stderr, "%s - failed on line %d\n", funcName, line);
+        fprintf(stderr, "Expected: \"%s\"\n", expected);
+        fprintf(stderr, "Got: \"%s\"\n\n", got);
+    } else
+        fprintf(stderr, "%s - OK\n", funcName);
+}
+
+void test_getEndOfString_zeroLength(){
+    char s[] = "";
+
+    ASSERT_STRING(&s[0], getEndOfString(s));
+}
+
+void test_getEndOfString_notZeroLength(){
+    char s[] = "123";
+
+    ASSERT_STRING(&s[3], getEndOfString(s));
+}
+
+void test_getEndOfString(){
+    test_getEndOfString_zeroLength();
+    test_getEndOfString_notZeroLength();
+}
+
+void test_removeNonLetters_zeroLetters(){
+    char s[] = "";
+    char s_test[] = "";
+
+    removeNonLetters(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_removeNonLetters_noSpaces(){
+    char s[] = "123";
+    char s_test[] = "123";
+
+    removeNonLetters(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_removeNonLetters_spacesAndLetters(){
+    char s[] = "1 2 3";
+    char s_test[] = "123\0 2 3";
+
+    removeNonLetters(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_removeNonLetters(){
+    test_removeNonLetters_zeroLetters();
+    test_removeNonLetters_noSpaces();
+    test_removeNonLetters_spacesAndLetters();
 }
 
 //тестирует функции, написанные выше
@@ -397,6 +474,8 @@ void test(){
     test_copy();
     test_copyIf();
     test_copyIfReverse();
+    test_getEndOfString();
+    test_removeNonLetters();
 }
 
 # endif
