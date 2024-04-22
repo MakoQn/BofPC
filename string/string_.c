@@ -461,6 +461,75 @@ void test_removeNonLetters(){
     test_removeNonLetters_spacesAndLetters();
 }
 
+void* removeExtraSpaces(char *s){
+    char *read = s;
+    char *write = s;
+
+    while(*read){
+        if(isspace(*read)){
+            if(write > s)
+                *write++ = *read;
+
+            while (*read && isspace(*read))
+                read++;
+
+            if(!*read)
+                break;
+        }
+
+        *write++ = *read;
+        read++;
+    }
+
+    while (write > s && isspace(*(write - 1)))
+        write--;
+
+    *write = '\0';
+}
+
+void test_removeExtraSpaces_zeroLetters(){
+    char s[] = "";
+    char s_test[] = "";
+
+    removeExtraSpaces(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_removeExtraSpaces_noSpaces(){
+    char s[] = "123";
+    char s_test[] = "123";
+
+    removeExtraSpaces(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_removeExtraSpaces_normalSpaces(){
+    char s[] = "1 2 3";
+    char s_test[] = "1 2 3";
+
+    removeExtraSpaces(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_removeExtraSpaces_extraSpaces(){
+    char s[] = "  1  2   3  ";
+    char s_test[] = "1 2 3";
+
+    removeExtraSpaces(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_removeExtraSpaces(){
+    test_removeExtraSpaces_zeroLetters();
+    test_removeExtraSpaces_noSpaces();
+    test_removeExtraSpaces_normalSpaces();
+    test_removeExtraSpaces_extraSpaces();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -476,6 +545,7 @@ void test(){
     test_copyIfReverse();
     test_getEndOfString();
     test_removeNonLetters();
+    test_removeExtraSpaces();
 }
 
 # endif
