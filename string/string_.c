@@ -686,25 +686,31 @@ void test_digitToStartNotReverseWholeString(){
 
 void replaceDigitsBySpaces(char *s) {
     WordDescriptor word;
-    getWord(s, &word);
+
+    if (!getWord(s, &word))
+        return;
+
     char *endStringBuffer = copy(word.begin, word.end, _stringBuffer);
     char *buf = _stringBuffer;
 
     *endStringBuffer = '\0';
 
-    while (*buf++ != '\0')
+    while (*buf != '\0') {
         if (isdigit(*buf))
             for (int i = 0; i < *buf - '0'; i++)
                 *s++ = ' ';
         else
             *s++ = *buf;
 
+        buf++;
+    }
+
     *s = '\0';
 }
 
 void test_replaceDigitsBySpaces_zeroLetters(){
-    char s[] = "";
-    char s_test[] = "";
+    char s[MAX_STRING_SIZE] = "";
+    char s_test[MAX_STRING_SIZE] = "";
 
     replaceDigitsBySpaces(s);
 
@@ -712,8 +718,8 @@ void test_replaceDigitsBySpaces_zeroLetters(){
 }
 
 void test_replaceDigitsBySpaces_onlyDigits(){
-    char s[] = "123";
-    char s_test[] = "      ";
+    char s[MAX_STRING_SIZE] = "223";
+    char s_test[MAX_STRING_SIZE] = "       ";
 
     replaceDigitsBySpaces(s);
 
@@ -721,8 +727,8 @@ void test_replaceDigitsBySpaces_onlyDigits(){
 }
 
 void test_replaceDigitsBySpaces_charactersAndDigits(){
-    char s[] = "1AB32";
-    char s_test[] = " AB     ";
+    char s[MAX_STRING_SIZE] = "2AB35";
+    char s_test[MAX_STRING_SIZE] = "  AB        ";
 
     replaceDigitsBySpaces(s);
 
@@ -754,6 +760,7 @@ void test(){
     test_digitToStartWholeString();
     test_digitToStartNotReverseWholeString();
     test_replaceDigitsBySpaces();
+    test_replace();
 }
 
 # endif
