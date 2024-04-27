@@ -4,6 +4,8 @@
 #define ASSERT_STRING(expected, got) assertString(expected, got, \
 __FILE__, __FUNCTION__, __LINE__)
 #define MAX_STRING_SIZE 100
+#define MAX_N_WORDS_IN_STRING 100
+#define MAX_WORD_SIZE 20
 
 # include <assert.h>
 # include <ctype.h>
@@ -682,6 +684,57 @@ void test_digitToStartNotReverseWholeString(){
     test_digitToStartNotReverseWholeString_charactersAndDigits();
 }
 
+void replaceDigitsBySpaces(char *s) {
+    WordDescriptor word;
+    getWord(s, &word);
+    char *endStringBuffer = copy(word.begin, word.end, _stringBuffer);
+    char *buf = _stringBuffer;
+
+    *endStringBuffer = '\0';
+
+    while (*buf++ != '\0')
+        if (isdigit(*buf))
+            for (int i = 0; i < *buf - '0'; i++)
+                *s++ = ' ';
+        else
+            *s++ = *buf;
+
+    *s = '\0';
+}
+
+void test_replaceDigitsBySpaces_zeroLetters(){
+    char s[] = "";
+    char s_test[] = "";
+
+    replaceDigitsBySpaces(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_replaceDigitsBySpaces_onlyDigits(){
+    char s[] = "123";
+    char s_test[] = "      ";
+
+    replaceDigitsBySpaces(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_replaceDigitsBySpaces_charactersAndDigits(){
+    char s[] = "1AB32";
+    char s_test[] = " AB     ";
+
+    replaceDigitsBySpaces(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_replaceDigitsBySpaces(){
+    test_replaceDigitsBySpaces_zeroLetters();
+    test_replaceDigitsBySpaces_onlyDigits();
+    test_replaceDigitsBySpaces_charactersAndDigits();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -700,6 +753,7 @@ void test(){
     test_removeExtraSpaces();
     test_digitToStartWholeString();
     test_digitToStartNotReverseWholeString();
+    test_replaceDigitsBySpaces();
 }
 
 # endif

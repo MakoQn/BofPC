@@ -1,8 +1,6 @@
 # ifndef STRING_H
 # define STRING_H
 
-#define MAX_STRING_SIZE 100
-
 # include <assert.h>
 # include <ctype.h>
 # include <memory.h>
