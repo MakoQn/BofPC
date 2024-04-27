@@ -1,6 +1,8 @@
 # ifndef STRING_H
 # define STRING_H
 
+#define MAX_STRING_SIZE 100
+
 # include <assert.h>
 # include <ctype.h>
 # include <memory.h>
@@ -19,6 +21,11 @@ char* find(char *begin, char *end, int ch);
 //символ, отличный от пробельных, расположенный на ленте памяти, начиная с begin и заканчивая ноль-символом.
 // Если символ не найден, возвращается адрес первого ноль-символа
 char* findNonSpace(char *begin);
+
+//возвращает указатель на первый пробельный
+//символ, расположенный на ленте памяти, начиная с begin и заканчивая ноль-символом.
+// Если символ не найден, возвращается адрес первого ноль-символа
+char* findSpace(char *begin);
 
 //возвращает указатель на первый справа символ, отличный от пробельных,
 //расположенный на ленте памяти, начиная с rbegin (последний символ
@@ -43,6 +50,18 @@ char* copyIf(char *beginSource, const char *endSource, char *beginDestination, i
 //записывает по адресу beginDestination элементы из фрагмента памяти начиная с rbeginSource заканчивая rendSource,
 //удовлетворяющие функции-предикату f. Функция возвращает значение beginDestination по окончанию работы функции.
 char* copyIfReverse(char *rbeginSource, const char *rendSource, char *beginDestination, int (*f)(int));
+
+//хранит позиции начала и конца слова
+typedef struct WordDescriptor {
+    char *begin; // позиция начала слова
+    char *end; // позиция первого символа, после последнего символа
+} WordDescriptor;
+
+//считывание слова с начала строки
+int getWord(char *beginSearch, WordDescriptor *word);
+
+//считывание слова с конца строки
+bool getWordReverse(char *rbegin, char *rend, WordDescriptor *word);
 
 //тестирует функции, написанные выше
 void test();

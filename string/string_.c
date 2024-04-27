@@ -3,7 +3,7 @@
 
 #define ASSERT_STRING(expected, got) assertString(expected, got, \
 __FILE__, __FUNCTION__, __LINE__)
-
+#define MAX_STRING_SIZE 100
 
 # include <assert.h>
 # include <ctype.h>
@@ -131,6 +131,9 @@ void test_findNonSpace(){
     test_findNonSpace_spacesAndSymbols();
 }
 
+//возвращает указатель на первый пробельный
+//символ, расположенный на ленте памяти, начиная с begin и заканчивая ноль-символом.
+// Если символ не найден, возвращается адрес первого ноль-символа
 char* findSpace(char *begin){
     while (*begin != '\0' && !isspace(*begin))
         begin++;
@@ -344,9 +347,17 @@ void test_copy(){
 //записывает по адресу beginDestination элементы из фрагмента памяти начиная с beginSource заканчивая endSource, удовлетворяющие функции-предикату f.
 //Функция возвращает указатель на следующий свободный для записи фрагмент в памяти
 char* copyIf(char *beginSource, const char *endSource, char *beginDestination, int (*f)(int)){
-    while (*beginSource++ < *endSource)
-        if (f(*beginSource))
-            memcpy(beginDestination, beginSource, sizeof *beginSource);
+    while (beginSource != endSource) {
+        if (f(*beginSource)) {
+            *beginDestination = *beginSource;
+
+            beginDestination++;
+        }
+
+        beginSource++;
+    }
+
+    *beginDestination = '\0';
 
     return beginDestination;
 }
@@ -356,7 +367,7 @@ void test_copyIf_ifDigit(){
     char s_dist[10];
     char s_cmp[10] = "5678";
 
-    copyIf(&s[0], &s[9], s_dist, isdigit);
+    copyIf(s, s + 9, s_dist, isdigit);
 
     assert(strcmp_(s_dist, s_cmp) == 0);
 }
@@ -368,9 +379,16 @@ void test_copyIf(){
 //записывает по адресу beginDestination элементы из фрагмента памяти начиная с rbeginSource заканчивая rendSource,
 //удовлетворяющие функции-предикату f. Функция возвращает значение beginDestination по окончанию работы функции.
 char* copyIfReverse(char *rbeginSource, const char *rendSource, char *beginDestination, int (*f)(int)){
-    while (*rbeginSource-- > *rendSource)
-        if (f(*rbeginSource))
-            memcpy(beginDestination, rbeginSource, sizeof *rbeginSource);
+    while (rbeginSource != rendSource) {
+        if (f(*(rbeginSource - 1))) {
+            *beginDestination = *(rbeginSource - 1);
+
+            beginDestination++;
+        }
+
+        rbeginSource--;
+    }
+    beginDestination[*(rbeginSource - 1)] = '\0';
 
     return beginDestination;
 }
@@ -380,7 +398,7 @@ void test_copyIfReverse_ifDigit(){
     char s_dist[10];
     char s_cmp[10] = "8765";
 
-    copyIfReverse(&s[0], &s[9], s_dist, isdigit);
+    copyIfReverse(&s[9], &s[0], s_dist, isdigit);
 
     assert(strcmp_(s_dist, s_cmp) == 0);
 }
@@ -438,8 +456,8 @@ void test_removeNonLetters_zeroLetters(){
 }
 
 void test_removeNonLetters_noSpaces(){
-    char s[] = "123";
-    char s_test[] = "123";
+    char s[] = "abc";
+    char s_test[] = "abc";
 
     removeNonLetters(s);
 
@@ -447,8 +465,8 @@ void test_removeNonLetters_noSpaces(){
 }
 
 void test_removeNonLetters_spacesAndLetters(){
-    char s[] = "1 2 3";
-    char s_test[] = "123\0 2 3";
+    char s[] = "a b c";
+    char s_test[] = "abc";
 
     removeNonLetters(s);
 
@@ -530,6 +548,140 @@ void test_removeExtraSpaces(){
     test_removeExtraSpaces_extraSpaces();
 }
 
+//хранит позиции начала и конца слова
+typedef struct WordDescriptor {
+    char *begin; // позиция начала слова
+    char *end; // позиция первого символа, после последнего символа
+} WordDescriptor;
+
+//считывание слова с начала строки
+int getWord(char *beginSearch, WordDescriptor *word) {
+    word->begin = findNonSpace(beginSearch);
+
+    if (*word->begin == '\0')
+        return 0;
+
+    word->end = findSpace(word->begin);
+
+    return 1;
+}
+
+//считывание слова с конца строки
+bool getWordReverse(char *rbegin, char *rend, WordDescriptor *word){
+    word->begin = findNonSpaceReverse(rbegin, rend);
+
+    if (isspace(*word->begin))
+        return 0;
+
+    word->end = findSpaceReverse(word->begin, rend);
+
+    return 1;
+}
+
+char _stringBuffer[MAX_STRING_SIZE + 1];
+
+void digitToStart(WordDescriptor word) {
+    char *endStringBuffer = copy(word.begin, word.end,_stringBuffer);
+    char *recPosition = copyIfReverse(endStringBuffer,_stringBuffer,word.begin, isdigit);
+
+    copyIf(_stringBuffer, endStringBuffer, recPosition, isalpha);
+}
+
+void digitToStartWholeString(char *beginString) {
+    char *beginSearch = beginString;
+    WordDescriptor word;
+
+    while (getWord(beginSearch, &word)) {
+        digitToStart(word);
+
+        beginSearch = word.end;
+    }
+}
+
+void test_digitToStartWholeString_zeroLetters(){
+    char s[] = "";
+    char s_test[] = "";
+
+    digitToStartWholeString(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_digitToStartWholeString_onlyDigits(){
+    char s[] = "123";
+    char s_test[] = "321";
+
+    digitToStartWholeString(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_digitToStartWholeString_charactersAndDigits(){
+    char s[] = "1AB32";
+    char s_test[] = "231AB";
+
+    digitToStartWholeString(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_digitToStartWholeString(){
+    test_digitToStartWholeString_zeroLetters();
+    test_digitToStartWholeString_onlyDigits();
+    test_digitToStartWholeString_charactersAndDigits();
+}
+
+void digitToStartNotReverse(WordDescriptor word) {
+    char *endStringBuffer = copy(word.begin, word.end,_stringBuffer);
+    char *recPosition = copyIf(_stringBuffer,endStringBuffer,word.begin, isdigit);
+
+    copyIf(_stringBuffer, endStringBuffer, recPosition, isalpha);
+}
+
+void digitToStartNotReverseWholeString(char *beginString) {
+    char *beginSearch = beginString;
+    WordDescriptor word;
+
+    while (getWord(beginSearch, &word)) {
+        digitToStartNotReverse(word);
+
+        beginSearch = word.end;
+    }
+}
+
+void test_digitToStartNotReverseWholeString_zeroLetters(){
+    char s[] = "";
+    char s_test[] = "";
+
+    digitToStartNotReverseWholeString(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_digitToStartNotReverseWholeString_onlyDigits(){
+    char s[] = "123";
+    char s_test[] = "123";
+
+    digitToStartNotReverseWholeString(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_digitToStartNotReverseWholeString_charactersAndDigits(){
+    char s[] = "1AB32";
+    char s_test[] = "132AB";
+
+    digitToStartNotReverseWholeString(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_digitToStartNotReverseWholeString(){
+    test_digitToStartNotReverseWholeString_zeroLetters();
+    test_digitToStartNotReverseWholeString_onlyDigits();
+    test_digitToStartNotReverseWholeString_charactersAndDigits();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -546,6 +698,8 @@ void test(){
     test_getEndOfString();
     test_removeNonLetters();
     test_removeExtraSpaces();
+    test_digitToStartWholeString();
+    test_digitToStartNotReverseWholeString();
 }
 
 # endif
