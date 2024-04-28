@@ -741,6 +741,72 @@ void test_replaceDigitsBySpaces(){
     test_replaceDigitsBySpaces_charactersAndDigits();
 }
 
+void replace(char *source, char *w1, char *w2) {
+    size_t w1Size = strlen_(w1);
+    size_t w2Size = strlen_(w2);
+    WordDescriptor word1 = {w1, w1 + w1Size};
+    WordDescriptor word2 = {w2, w2 + w2Size};
+    char *readPtr, *recPtr;
+
+    if (w1Size >= w2Size) {
+        readPtr = source;
+        recPtr = source;
+    } else {
+        copy(source, getEndOfString(source), _stringBuffer);
+        readPtr = _stringBuffer;
+        recPtr = source;
+    }
+
+    WordDescriptor word = {readPtr, readPtr + w1Size};
+
+    while (*readPtr != '\0') {
+        if (*readPtr == *word1.begin) {
+            if (strcmp_(word1.begin,word.begin) >= 0) {
+                copy(word2.begin,word2.end,recPtr);
+                readPtr+=w1Size;
+                recPtr+=w2Size;
+            }else
+                *recPtr++=*readPtr++;
+        }else
+            *recPtr++=*readPtr++;
+    }
+
+    *recPtr='\0';
+}
+
+void test_replace_zeroWords(){
+    char s[] = "";
+    char s_test[] = "";
+
+    replace(s, "my", "our");
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_replace_notReplaced(){
+    char s[] = "Its our place";
+    char s_test[] = "Its our place";
+
+    replace(s, "my", "our");
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_replace_replaced(){
+    char s[] = "Its our place";
+    char s_test[] = "Its my place";
+
+    replace(s, "our", "my");
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_replace(){
+    test_replace_zeroWords();
+    test_replace_notReplaced();
+    test_replace_replaced();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
