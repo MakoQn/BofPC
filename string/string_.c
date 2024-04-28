@@ -1546,6 +1546,72 @@ void test_findPrecedingWord() {
     test_findPrecedingWord_equal();
 }
 
+bool isPalindromeWord(WordDescriptor *word) {
+    char* end=word->end;
+    char* begin=word->begin;
+
+    end--;
+
+    while (end - begin > 0) {
+        if (*begin != *end)
+            return false;
+
+        begin++;
+        end--;
+    }
+
+    return true;
+}
+
+void removePalindromeWord(char *s){
+    char* begin = _stringBuffer;
+    char* end = copy(s,s+ strlen_(s),_stringBuffer);
+    char* rec_ptr = s;
+
+    WordDescriptor word;
+
+    while(getWord(begin,&word)){
+        if(!isPalindromeWord(&word)) {
+            rec_ptr = copy(word.begin, word.end, rec_ptr);
+            if (word.end != end)
+                *rec_ptr++ = ' ';
+        }
+        begin = word.end + 1;
+    }
+
+    *rec_ptr = '\0';
+    free_string(_stringBuffer);
+}
+
+void test_removePalindromeWord_zeroWords() {
+    char s[] = "";
+
+    removePalindromeWord(s);
+
+    ASSERT_STRING("", s);
+}
+
+void test_removePalindromeWord_noPalidrome(){
+    char s[] = "aNg abc";
+
+    removePalindromeWord(s);
+
+    ASSERT_STRING("aNg abc", s);
+}
+
+void test_removePalindromeWord_palindromeIsExist(){
+    char s[] = "aNa abc";
+
+    removePalindromeWord(s);
+
+    ASSERT_STRING("abc", s);
+}
+
+void test_removePalindromeWord(){
+    test_removePalindromeWord_zeroWords();
+    test_removePalindromeWord_noPalidrome();
+    test_removePalindromeWord_palindromeIsExist();
+}
 
 //тестирует функции, написанные выше
 void test(){
@@ -1578,6 +1644,7 @@ void test(){
     test_areIdenticalWordsInString();
     test_getWordExceptLast();
     test_findPrecedingWord();
+    test_removePalindromeWord();
 }
 
 # endif
