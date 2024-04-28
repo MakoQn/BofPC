@@ -1613,6 +1613,78 @@ void test_removePalindromeWord(){
     test_removePalindromeWord_palindromeIsExist();
 }
 
+void complementString(char *s1, char *s2, int n) {
+    char *beginSearch = s2;
+
+    while (getWordWithoutSpace(beginSearch, &_bag.words[_bag.size])) {
+        beginSearch = _bag.words[_bag.size].end + 1;
+        _bag.size++;
+    }
+
+    char *rec_ptr = getEndOfString(s1);
+
+    *rec_ptr++ = ' ';
+
+    for (size_t i = _bag.size - n; i < _bag.size; ++i) {
+        rec_ptr = copy(_bag.words[i].begin, _bag.words[i].end + 1, rec_ptr);
+        if (i != _bag.size - 1)
+            *rec_ptr++ = ' ';
+    }
+    *rec_ptr = '\0';
+
+    freeBagOfWords(&_bag);
+}
+
+void balanceString(char* s1, int n1, char* s2, int n2) {
+    if (n1 < n2)
+        complementString(s1, s2, n2 - n1);
+    else if (n2 < n1)
+        complementString(s2, s1, n1 - n2);
+}
+
+void test_complementString_zeroWords(){
+    char s1[MAX_WORD_SIZE] = "";
+    int n1 = 0;
+    char s2[MAX_WORD_SIZE] = "";
+    int n2 = 0;
+
+    balanceString(s1, n1, s2, n2);
+
+    ASSERT_STRING("",s1);
+    ASSERT_STRING("",s2);
+}
+
+void test_complementString_notEqual() {
+    char s1[MAX_WORD_SIZE] = "Frog Pepe";
+    int n1 = 2;
+    char s2[MAX_WORD_SIZE] = "Bobo";
+    int n2 = 1;
+
+    balanceString(s1, n1, s2, n2);
+
+    ASSERT_STRING("Frog Pepe",s1);
+    ASSERT_STRING("Bobo Pepe",s2);
+}
+
+void test_complementString_equal() {
+    char s1[MAX_WORD_SIZE] = "Frog Pepe";
+    int n1 = 2;
+    char s2[MAX_WORD_SIZE] = "NiKo Ni";
+    int n2 = 2;
+
+    balanceString(s1, n1, s2, n2);
+
+    ASSERT_STRING("Frog Pepe",s1);
+    ASSERT_STRING("NiKo Ni",s2);
+}
+
+void test_complementString(){
+    test_complementString_zeroWords();
+    test_complementString_notEqual();
+    test_complementString_equal();
+}
+
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -1645,6 +1717,7 @@ void test(){
     test_getWordExceptLast();
     test_findPrecedingWord();
     test_removePalindromeWord();
+    test_complementString();
 }
 
 # endif
