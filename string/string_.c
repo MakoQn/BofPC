@@ -1270,9 +1270,9 @@ void test_lastWordInFirstStringInSecondString_oneWord(){
     ASSERT_STRING("in", dest);
 }
 void test_lastWordInFirstStringInSecondString_moreThanOneWord(){
-    char s1[]="I buy the new forggys on the gs";
-    char s2[]="on the baobab";
-    char dest[MAX_N_WORDS_IN_STRING]="";
+    char s1[] = "I buy the new forggys on the gs";
+    char s2[] = "on the baobab";
+    char dest[MAX_N_WORDS_IN_STRING] = "";
 
     WordDescriptor word = lastWordInFirstStringInSecondString(s1,s2);
     wordDescriptorToString(word,dest);
@@ -1285,6 +1285,61 @@ void test_lastWordInFirstStringInSecondString(){
     test_lastWordInFirstStringInSecondString_moreThanOneWord();
 }
 
+void free_string(char* s) {
+    char *ptr = s;
+    while (*ptr) {
+        *ptr = '\0';
+        ptr++;
+    }
+}
+
+bool areEqualWordsInString(char* s){
+    char *beginBuffer=_stringBuffer;
+
+    copy(s,s+ strlen_(s),_stringBuffer);
+
+    while(getWordWithoutSpace(beginBuffer,&_bag.words[_bag.size])){
+        beginBuffer=_bag.words[_bag.size].end+2;
+        _bag.size++;
+    }
+
+    free_string(_stringBuffer);
+
+    if(_bag.size<=1)
+        return 0;
+    for (int i = 0; i < _bag.size; ++i)
+        for (int j = i+1; j < _bag.size; ++j)
+            if(isWordsEqual(_bag.words[i],_bag.words[j])) {
+                freeBagOfWords(&_bag);
+
+                return 1;
+            }
+    freeBagOfWords(&_bag);
+
+    return 0;
+}
+
+
+void test_areEqualWordsInString_zeroWords(){
+    char s[] = "" ;
+
+    assert(!areEqualWordsInString(s));
+}
+void test_areEqualWordsInString_noEqual(){
+    char s[]="Niko Ni";
+
+    assert(!areEqualWordsInString(s));
+}
+void test_areEqualWordsInString_equal(){
+    char s[]="Niko Niko Ni";
+
+    assert(areEqualWordsInString(s));
+}
+void test_areEqualWordsInString(){
+    test_areEqualWordsInString_zeroWords();
+    test_areEqualWordsInString_noEqual();
+    test_areEqualWordsInString_equal();
+}
 
 //тестирует функции, написанные выше
 void test(){
@@ -1313,6 +1368,7 @@ void test(){
     test_writeWordsInReverseOrder();
     test_getWordBeforeFirstWordWithA();
     test_lastWordInFirstStringInSecondString();
+    test_areEqualWordsInString();
 }
 
 # endif
