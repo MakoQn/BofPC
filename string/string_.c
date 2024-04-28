@@ -6,6 +6,7 @@ __FILE__, __FUNCTION__, __LINE__)
 #define MAX_STRING_SIZE 100
 #define MAX_N_WORDS_IN_STRING 100
 #define MAX_WORD_SIZE 20
+#define CHARACTERS 97
 
 # include <assert.h>
 # include <ctype.h>
@@ -1684,6 +1685,61 @@ void test_complementString(){
     test_complementString_equal();
 }
 
+bool lettersBelongString(char* string, WordDescriptor word){
+    bool include[26] = {0};
+    char *begin = string;
+    char *end = getEndOfString(string);
+
+    while (begin != end){
+        if(isalpha(*begin))
+            include[*begin-CHARACTERS] = 1;
+
+        begin++;
+    }
+
+    while (word.begin != word.end){
+        if(!include[*word.begin-CHARACTERS])
+            return 0;
+
+        word.begin++;
+    }
+
+    return 1;
+}
+
+void test_lettersBelongString_zeroWords(){
+    char s[] = "";
+    WordDescriptor word;
+
+    getWord("", &word);
+
+    assert(!lettersBelongString(s,word));
+}
+
+void test_lettersBelongString_include(){
+    char s[]="Bebey shutnyara";
+    WordDescriptor word;
+
+    getWord("shut",&word);
+
+    assert(lettersBelongString(s,word));
+}
+
+void test_lettersBelongString_notInclude(){
+    char s[]="Bebey shutnyara";
+    WordDescriptor word;
+
+    getWord("putis",&word);
+
+    assert(!lettersBelongString(s,word));
+}
+
+void test_lettersBelongString(){
+    test_lettersBelongString_zeroWords();
+    test_lettersBelongString_include();
+    test_lettersBelongString_notInclude();
+}
+
 
 //тестирует функции, написанные выше
 void test(){
@@ -1718,6 +1774,7 @@ void test(){
     test_findPrecedingWord();
     test_removePalindromeWord();
     test_complementString();
+    test_lettersBelongString();
 }
 
 # endif
