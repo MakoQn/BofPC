@@ -1467,6 +1467,84 @@ void test_getWordExceptLast(){
     test_getWordExceptLast_moreThanOneWord();
 }
 
+WordDescriptor findPrecedingWord(char *s1, char *s2) {
+    freeBagOfWords(&_bag);
+    freeBagOfWords(&_bag2);
+    char *begin_search_1 = s1;
+    char *begin_search_2 = s2;
+
+    while (getWordWithoutSpace(begin_search_1, &_bag.words[_bag.size])) {
+        begin_search_1 = _bag.words[_bag.size].end + 1;
+        _bag.size++;
+    }
+
+    while (getWordWithoutSpace(begin_search_2, &_bag2.words[_bag2.size])) {
+        begin_search_2 = _bag2.words[_bag2.size].end + 1;
+        _bag2.size++;
+    }
+
+    bool stop = 0;
+
+    WordDescriptor w;
+    WordDescriptor preceding_w = {.begin = NULL, .end = NULL};
+
+    for (size_t i = 1; i < _bag.size; i++) {
+        w = _bag.words[i];
+        for (size_t j = 0; j < _bag2.size; j++)
+            if (isWordsEqual(w, _bag2.words[j])) {
+                stop = 1;
+                break;
+            }
+        if (stop) {
+            preceding_w = _bag.words[i - 1];
+            break;
+        }
+    }
+
+    freeBagOfWords(&_bag);
+    freeBagOfWords(&_bag2);
+
+    return preceding_w;
+}
+
+void test_findPrecedingWord_zeroWords() {
+    char s1[] = "";
+    char s2[] = "";
+    char dest[MAX_WORD_SIZE] = "";
+
+    WordDescriptor word = findPrecedingWord(s1, s2);
+    wordDescriptorToString(word, dest);
+
+    ASSERT_STRING("", dest);
+}
+
+void test_findPrecedingWord_noEqual() {
+    char s1[] = "";
+    char s2[] = "Bibis";
+    char dest[MAX_WORD_SIZE] = "";
+
+    WordDescriptor word = findPrecedingWord(s1, s2);
+    wordDescriptorToString(word, dest);
+
+    ASSERT_STRING("", dest);
+}
+
+void test_findPrecedingWord_equal() {
+    char s1[] = "Water Bibis";
+    char s2[] = "Bibis";
+    char dest[MAX_WORD_SIZE] = "";
+
+    WordDescriptor word = findPrecedingWord(s1, s2);
+    wordDescriptorToString(word, dest);
+
+    ASSERT_STRING("Water", dest);
+}
+
+void test_findPrecedingWord() {
+    test_findPrecedingWord_zeroWords();
+    test_findPrecedingWord_noEqual();
+    test_findPrecedingWord_equal();
+}
 
 
 //тестирует функции, написанные выше
@@ -1499,6 +1577,7 @@ void test(){
     test_areEqualWordsInString();
     test_areIdenticalWordsInString();
     test_getWordExceptLast();
+    test_findPrecedingWord();
 }
 
 # endif
