@@ -1351,6 +1351,8 @@ void sortWordLetters(WordDescriptor *word){
 }
 
 bool areIdenticalWordsInString(char* s) {
+    freeBagOfWords(&_bag);
+    freeBagOfWords(&_bag2);
     char *beginBuffer = _stringBuffer;
 
     copy(s, s + strlen_(s), _stringBuffer);
@@ -1405,6 +1407,68 @@ void test_areIdenticalWordsInString(){
     test_areIdenticalWordsInString_noEqual();
 }
 
+void getWordExceptLast(char* source, char* dest) {
+    char *beginSearch = source;
+
+    while (getWordWithoutSpace(beginSearch, &_bag.words[_bag.size])) {
+        beginSearch = _bag.words[_bag.size].end + 1;
+        _bag.size++;
+    }
+
+    if (_bag.size == 0) {
+        freeBagOfWords(&_bag);
+        return;
+    }
+
+    WordDescriptor last_word = _bag.words[_bag.size - 1];
+
+    char *rec_ptr = dest;
+
+    for (size_t i = 0; i < _bag.size - 1; i++) {
+        if (!isWordsEqual(_bag.words[i], last_word)) {
+            rec_ptr = copy(_bag.words[i].begin, _bag.words[i].end + 1, rec_ptr);
+            if (i != _bag.size - 2)
+                *rec_ptr++ = ' ';
+        }
+    }
+
+    *rec_ptr='\0';
+    freeBagOfWords(&_bag);
+}
+
+void test_getWordExceptLast_zeroWords(){
+    char s[]="";
+    char dest[]="";
+
+    getWordExceptLast(s,dest);
+
+    ASSERT_STRING("" ,dest);
+}
+void test_getWordExceptLast_oneWord(){
+    char s[]="ABOBA";
+    char dest[MAX_WORD_SIZE]="";
+
+    getWordExceptLast(s,dest);
+
+    ASSERT_STRING("",dest);
+}
+void test_getWordExceptLast_moreThanOneWord(){
+    char s[]="Bibis Meme Bobo Bibis";
+    char dest[MAX_WORD_SIZE]="";
+
+    getWordExceptLast(s,dest);
+
+    ASSERT_STRING("Meme Bobo",dest);
+}
+
+void test_getWordExceptLast(){
+    test_getWordExceptLast_zeroWords();
+    test_getWordExceptLast_oneWord();
+    test_getWordExceptLast_moreThanOneWord();
+}
+
+
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -1434,6 +1498,7 @@ void test(){
     test_lastWordInFirstStringInSecondString();
     test_areEqualWordsInString();
     test_areIdenticalWordsInString();
+    test_getWordExceptLast();
 }
 
 # endif
