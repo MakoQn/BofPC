@@ -903,6 +903,79 @@ void test_printReverse(){
     test_printReverse_notEmpty();
 }
 
+bool isPalindrome(char *begin, char *end) {
+    end--;
+
+    while (end - begin > 0)
+        if (*begin++ != *end--)
+            return 0;
+
+    return 1;
+}
+
+char* findNonPunct(char *begin){
+    while (*begin != '\0' && (isspace(*begin) || ispunct(*begin)))
+        begin++;
+
+    return begin;
+}
+
+char* findPunct(char *begin){
+    while (*begin != '\0' && !ispunct(*begin))
+        begin++;
+
+    return begin;
+}
+
+int getWordPunct(char *beginSearch, WordDescriptor *word) {
+    word->begin = findNonPunct(beginSearch);
+
+    if (*word->begin == '\0')
+        return 0;
+
+    word->end = findPunct(word->begin);
+
+    return 1;
+}
+
+int countPalindromes(char *s){
+    char *beginSearch = s;
+    WordDescriptor word;
+    int count_of_palindromes = 0;
+
+    while (getWordPunct(beginSearch, &word)) {
+        count_of_palindromes += isPalindrome(word.begin, word.end);
+
+        beginSearch = word.end;
+    }
+
+    return count_of_palindromes;
+}
+
+void test_countPalindromes_zeroWords(){
+    char s[] = "";
+
+    assert(!countPalindromes(s));
+}
+
+void test_countPalindromes_zeroPalindromes(){
+    char s[] = "cdv,abc";
+
+    assert(!countPalindromes(s));
+}
+
+void test_countPalindromes_onePalindrome(){
+    char s[] = "cdc,abc";
+
+    assert(countPalindromes(s) == 1);
+}
+
+void test_countPalindromes(){
+    test_countPalindromes_zeroWords();
+    test_countPalindromes_zeroPalindromes();
+    test_countPalindromes_onePalindrome();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -925,6 +998,7 @@ void test(){
     test_replace();
     test_wordsAreOrdered();
     test_printReverse();
+    test_countPalindromes();
 }
 
 # endif
