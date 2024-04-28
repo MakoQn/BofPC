@@ -807,6 +807,54 @@ void test_replace(){
     test_replace_replaced();
 }
 
+int areWordsEqual(WordDescriptor w1, WordDescriptor w2){
+    return strcmp_(w1.begin, w2.begin);
+};
+
+bool wordsAreOrdered(char *s){
+    char *beginSearch = s;
+    WordDescriptor current;
+
+    if (!getWord(beginSearch, &current))
+        return 1;
+
+    WordDescriptor previous = current;
+
+    while (getWord(beginSearch, &current)){
+        if (areWordsEqual(current, previous) < 0)
+            return 0;
+
+        beginSearch = current.end;
+        previous = current;
+    }
+
+    return 1;
+}
+
+void test_wordsAreOrdered_zeroWords(){
+    char s[] = "";
+
+    assert(wordsAreOrdered(s));
+}
+
+void test_wordsAreOrdered_unordered(){
+    char s[] = "cd ab";
+
+    assert(!wordsAreOrdered(s));
+}
+
+void test_wordsAreOrdered_ordered(){
+    char s[] = "ab cd";
+
+    assert(wordsAreOrdered(s));
+}
+
+void test_wordsAreOrdered(){
+    test_wordsAreOrdered_zeroWords();
+    test_wordsAreOrdered_unordered();
+    test_wordsAreOrdered_ordered();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -827,6 +875,7 @@ void test(){
     test_digitToStartNotReverseWholeString();
     test_replaceDigitsBySpaces();
     test_replace();
+    test_wordsAreOrdered();
 }
 
 # endif
