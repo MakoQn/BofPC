@@ -1112,7 +1112,6 @@ bool isLettersInWord(WordDescriptor word, char character) {
     char *beginString = word.begin;
 
     while (beginString != word.end) {
-        printf("%c %d\n", *beginString, *beginString == character);
         if (*beginString == character)
             return 1;
 
@@ -1172,6 +1171,121 @@ void test_getWordBeforeFirstWordWithA(){
     assert(getWordBeforeFirstWordWithA(s4, &word) == NOT_FOUND_A_WORD_WITH_A);
 }
 
+void wordDescriptorToString(WordDescriptor word, char* dest) {
+    if (word.begin == NULL && word.end == NULL)
+        return;
+
+    while (word.begin <= word.end) {
+        *dest = *word.begin;
+        word.begin++;
+        dest++;
+    }
+
+    *dest = '\0';
+}
+
+void freeBagOfWords(BagOfWords * bag) {
+    for (size_t i = 0; i < bag->size; i++) {
+        bag->words[i].begin = NULL;
+        bag->words[i].end = NULL;
+    }
+
+    bag->size = 0;
+}
+
+bool isWordsEqual(const WordDescriptor word1, const WordDescriptor  word2) {
+    char* begin1 = word1.begin;
+    char* begin2 = word2.begin;
+
+    while (begin1 < word1.end && begin2 < word2.end) {
+        if (*begin1 != *begin2)
+            return false;
+
+        begin1++;
+        begin2++;
+    }
+
+    if (word1.end - begin1 > 0 || word2.end - begin2 > 0)
+        return false;
+
+    return true;
+}
+
+bool getWordWithoutSpace(char* begin_search, WordDescriptor * word) {
+    word->begin = findNonSpace(begin_search);
+
+    if (*word->begin == '\0')
+        return 0;
+
+    word->end = findSpace(word->begin) - 1;
+
+    return 1;
+}
+
+WordDescriptor lastWordInFirstStringInSecondString(char *s1, char *s2){
+    freeBagOfWords(&_bag);
+    freeBagOfWords(&_bag2);
+    char *beginsearch1 = s1;
+    char *beginsearch2 = s2;
+
+    while (getWordWithoutSpace(beginsearch1, &_bag.words[_bag.size])) {
+        beginsearch1 = _bag.words[_bag.size].end + 1;
+        _bag.size++;
+    }
+
+    while (getWordWithoutSpace(beginsearch2, &_bag2.words[_bag2.size])) {
+        beginsearch2 = _bag2.words[_bag2.size].end + 1;
+        _bag2.size++;
+    }
+
+    WordDescriptor word = {.begin = NULL, .end = NULL};
+
+    for (int i = (int) _bag.size - 1; i >= 0; i--)
+        for (int j = 0; j < _bag2.size; j++)
+            if (isWordsEqual(_bag.words[i], _bag2.words[j])) {
+                word = _bag.words[i];
+                freeBagOfWords(&_bag);
+                freeBagOfWords(&_bag2);
+            }
+
+    return word;
+};
+
+void test_lastWordInFirstStringInSecondString_zeroWords(){
+    char s1[] = "";
+    char s2[] = "";
+
+    WordDescriptor word = lastWordInFirstStringInSecondString(s1,s2);
+
+    assert(word.begin == NULL && word.end == NULL);
+}
+void test_lastWordInFirstStringInSecondString_oneWord(){
+    char s1[] = "Ni in Pairs";
+    char s2[] = "in Alabama";
+    char dest[MAX_WORD_SIZE] = "";
+
+    WordDescriptor word = lastWordInFirstStringInSecondString(s1,s2);
+    wordDescriptorToString(word,dest);
+
+    ASSERT_STRING("in", dest);
+}
+void test_lastWordInFirstStringInSecondString_moreThanOneWord(){
+    char s1[]="I buy the new forggys on the gs";
+    char s2[]="on the baobab";
+    char dest[MAX_N_WORDS_IN_STRING]="";
+
+    WordDescriptor word = lastWordInFirstStringInSecondString(s1,s2);
+    wordDescriptorToString(word,dest);
+
+    ASSERT_STRING("the", dest);
+}
+void test_lastWordInFirstStringInSecondString(){
+    test_lastWordInFirstStringInSecondString_zeroWords();
+    test_lastWordInFirstStringInSecondString_oneWord();
+    test_lastWordInFirstStringInSecondString_moreThanOneWord();
+}
+
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -1198,6 +1312,7 @@ void test(){
     test_alternateWords();
     test_writeWordsInReverseOrder();
     test_getWordBeforeFirstWordWithA();
+    test_lastWordInFirstStringInSecondString();
 }
 
 # endif
