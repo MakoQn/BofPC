@@ -711,7 +711,7 @@ void replaceDigitsBySpaces(char *s) {
 
 void test_replaceDigitsBySpaces_zeroLetters(){
     char s[MAX_STRING_SIZE] = "";
-    char s_test[MAX_STRING_SIZE] = "";
+    char s_test[] = "";
 
     replaceDigitsBySpaces(s);
 
@@ -720,7 +720,7 @@ void test_replaceDigitsBySpaces_zeroLetters(){
 
 void test_replaceDigitsBySpaces_onlyDigits(){
     char s[MAX_STRING_SIZE] = "223";
-    char s_test[MAX_STRING_SIZE] = "       ";
+    char s_test[] = "       ";
 
     replaceDigitsBySpaces(s);
 
@@ -729,7 +729,7 @@ void test_replaceDigitsBySpaces_onlyDigits(){
 
 void test_replaceDigitsBySpaces_charactersAndDigits(){
     char s[MAX_STRING_SIZE] = "2AB35";
-    char s_test[MAX_STRING_SIZE] = "  AB        ";
+    char s_test[] = "  AB        ";
 
     replaceDigitsBySpaces(s);
 
@@ -976,6 +976,68 @@ void test_countPalindromes(){
     test_countPalindromes_onePalindrome();
 }
 
+void alternateWords(char *s, char *s1, char *s2) {
+    char *beginString = s;
+    bool isW1Found = true, isW2Found;
+    char *beginSearch1 = s1, *beginSearch2 = s2;
+    WordDescriptor word1, word2;
+
+    while (isW1Found || isW2Found) {
+        isW1Found = getWord(beginSearch1, &word1);
+        isW2Found = getWord(beginSearch2, &word2);
+
+        if (isW1Found) {
+            beginString = copy(word1.begin, word1.end, beginString);
+            *beginString++ = ' ';
+            beginSearch1 = word1.end;
+        }
+        if (isW2Found) {
+            beginString = copy(word2.begin, word2.end, beginString);
+            *beginString++ = ' ';
+            beginSearch2 = word2.end;
+        }
+    }
+    *(beginString - 1) = '\0';
+}
+void test_alternateWords_zeroWords(){
+    char s[30] = "";
+    char s1[] = "";
+    char s2[] = "";
+    char s_test[] = "";
+
+    alternateWords(s, s1, s2);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_alternateWords_w1AndW2AreEqualCount(){
+    char s[30] = "";
+    char s1[] = "A A A";
+    char s2[] = "B B B";
+    char s_test[] = "A B A B A B";
+
+    alternateWords(s, s1, s2);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_alternateWords_w1AndW2ArentEqualCount(){
+    char s[30] = "";
+    char s1[] = "A A A";
+    char s2[] = "B B";
+    char s_test[] = "A B A B A";
+
+    alternateWords(s, s1, s2);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_alternateWords(){
+    test_alternateWords_zeroWords();
+    test_alternateWords_w1AndW2AreEqualCount();
+    test_alternateWords_w1AndW2ArentEqualCount();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -999,6 +1061,7 @@ void test(){
     test_wordsAreOrdered();
     test_printReverse();
     test_countPalindromes();
+    test_alternateWords();
 }
 
 # endif
