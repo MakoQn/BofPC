@@ -1,6 +1,10 @@
 # ifndef STRING_H
 # define STRING_H
 
+#define MAX_STRING_SIZE 100
+#define MAX_N_WORDS_IN_STRING 100
+#define MAX_WORD_SIZE 20
+
 # include <assert.h>
 # include <ctype.h>
 # include <memory.h>
@@ -60,6 +64,13 @@ int getWord(char *beginSearch, WordDescriptor *word);
 
 //считывание слова с конца строки
 bool getWordReverse(char *rbegin, char *rend, WordDescriptor *word);
+
+//структура, которая хранит начало
+//и конец каждого слова исходной строки
+typedef struct BagOfWords {
+    WordDescriptor words[MAX_N_WORDS_IN_STRING];
+    size_t size;
+} BagOfWords;
 
 //тестирует функции, написанные выше
 void test();

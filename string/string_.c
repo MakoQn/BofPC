@@ -11,6 +11,7 @@ __FILE__, __FUNCTION__, __LINE__)
 # include <ctype.h>
 # include <memory.h>
 # include <stdio.h>
+# include "string_.h"
 
 //нахождение длины строки
 int findLength(const char *str) {
@@ -855,6 +856,53 @@ void test_wordsAreOrdered(){
     test_wordsAreOrdered_ordered();
 }
 
+//структура, которая хранит начало
+//и конец каждого слова исходной строки
+typedef struct BagOfWords {
+    WordDescriptor words[MAX_N_WORDS_IN_STRING];
+    size_t size;
+} BagOfWords;
+
+BagOfWords _bag;
+BagOfWords _bag2;
+
+void getBagOfWords(BagOfWords *bag, char *s){
+    char *beginSearch = s;
+    WordDescriptor word;
+
+    bag->size = 0;
+    while (getWord(beginSearch, &word)){
+        bag->words[bag->size++] = word;
+        beginSearch = word.end;
+    }
+}
+
+void printReverse(char *s){
+    getBagOfWords(&_bag, s);
+    for (int i = _bag.size - 1; i >= 0; i--){
+        char *endStringBuffer = copy(_bag.words[i].begin, _bag.words[i].end, _stringBuffer);
+        *endStringBuffer = '\0';
+        printf("%s\n", _stringBuffer);
+    }
+}
+
+void test_printReverse_zeroWords(){
+    char s[] = "";
+
+    printReverse(s);
+}
+
+void test_printReverse_notEmpty(){
+    char s[] = "A BC  D";
+
+    printReverse(s);
+}
+
+void test_printReverse(){
+    test_printReverse_zeroWords();
+    test_printReverse_notEmpty();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -876,6 +924,7 @@ void test(){
     test_replaceDigitsBySpaces();
     test_replace();
     test_wordsAreOrdered();
+    test_printReverse();
 }
 
 # endif
