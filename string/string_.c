@@ -571,12 +571,12 @@ int getWord(char *beginSearch, WordDescriptor *word) {
 
 //считывание слова с конца строки
 bool getWordReverse(char *rbegin, char *rend, WordDescriptor *word){
-    word->begin = findNonSpaceReverse(rbegin, rend);
+    word->end = findNonSpaceReverse(rbegin, rend);
 
-    if (isspace(*word->begin))
+    if (word->end == rend)
         return 0;
 
-    word->end = findSpaceReverse(word->begin, rend);
+    word->begin = findSpaceReverse(word->end, rend) + 1;
 
     return 1;
 }
@@ -999,6 +999,7 @@ void alternateWords(char *s, char *s1, char *s2) {
     }
     *(beginString - 1) = '\0';
 }
+
 void test_alternateWords_zeroWords(){
     char s[30] = "";
     char s1[] = "";
@@ -1038,6 +1039,68 @@ void test_alternateWords(){
     test_alternateWords_w1AndW2ArentEqualCount();
 }
 
+void reverse(char* begin, char* end){
+    char temp;
+
+    while (begin < end) {
+        temp = *begin;
+        *begin++ = *end;
+        *end-- = temp;
+    }
+}
+
+void writeWordsInReverseOrder(char *s) {
+    char *word_begin = NULL;
+    char *beginString = s;
+
+    while (*beginString) {
+        if ((word_begin == NULL) && (*beginString != ' ')) {
+            word_begin = beginString;
+        }
+
+        if (word_begin && ((*beginString + 1 == ' ') || (*beginString + 1 == '\0'))) {
+            reverse(word_begin, beginString);
+            word_begin = NULL;
+        }
+        beginString++;
+    }
+
+    reverse(s, beginString - 1);
+}
+
+void test_writeWordsInReverseOrder_zeroWords(){
+    char s[] = "";
+    char s_test[] = "";
+
+    writeWordsInReverseOrder(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_writeWordsInReverseOrder_oneWord(){
+    char s[] = "A";
+    char s_test[] = "A";
+
+    writeWordsInReverseOrder(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_writeWordsInReverseOrder_moreThanOneWord(){
+    char s[] = "A B C D";
+    char s_test[] = "D C B A";
+
+    writeWordsInReverseOrder(s);
+
+    ASSERT_STRING(s_test, s);
+}
+
+void test_writeWordsInReverseOrder(){
+    test_writeWordsInReverseOrder_zeroWords();
+    test_writeWordsInReverseOrder_oneWord();
+    test_writeWordsInReverseOrder_moreThanOneWord();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -1062,6 +1125,7 @@ void test(){
     test_printReverse();
     test_countPalindromes();
     test_alternateWords();
+    test_writeWordsInReverseOrder();
 }
 
 # endif
