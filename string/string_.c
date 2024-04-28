@@ -12,6 +12,7 @@ __FILE__, __FUNCTION__, __LINE__)
 # include <memory.h>
 # include <stdio.h>
 # include "string_.h"
+#include <stdlib.h>
 
 //нахождение длины строки
 int findLength(const char *str) {
@@ -1341,6 +1342,69 @@ void test_areEqualWordsInString(){
     test_areEqualWordsInString_equal();
 }
 
+int compare_letters(void* s1,void* s2){
+    return *(char*)s1-*(char *) s2;
+}
+
+void sortWordLetters(WordDescriptor *word){
+    qsort(word->begin,word->end - word->begin, sizeof (char ), (int (*)(const void *, const void*)) compare_letters);
+}
+
+bool areIdenticalWordsInString(char* s) {
+    char *beginBuffer = _stringBuffer;
+
+    copy(s, s + strlen_(s), _stringBuffer);
+
+    while (getWordWithoutSpace(beginBuffer, &_bag.words[_bag.size])) {
+        beginBuffer = _bag.words[_bag.size].end + 2;
+        _bag.size++;
+    }
+
+    free_string(_stringBuffer);
+
+    if (_bag.size <= 1)
+        return 0;
+
+    for (size_t i = 0; i < _bag.size; ++i)
+        sortWordLetters(&_bag.words[i]);
+
+    for (size_t i = 0; i < _bag.size; ++i)
+        for (size_t j = 0; j < _bag.size; ++j)
+            if (isWordsEqual(_bag.words[i], _bag.words[j])){
+                freeBagOfWords(&_bag);
+
+                return 1;
+            }
+
+    freeBagOfWords(&_bag);
+
+    return 0;
+}
+
+void test_areIdenticalWordsInString_zeroWords(){
+    char s[] = "";
+
+    assert(!areIdenticalWordsInString(s));
+}
+
+void test_areIdenticalWordsInString_Equal(){
+    char s[]="AA AA";
+
+    assert(areIdenticalWordsInString(s));
+}
+
+void test_areIdenticalWordsInString_noEqual(){
+    char s[]="AA NN";
+
+    assert(areIdenticalWordsInString(s));
+}
+
+void test_areIdenticalWordsInString(){
+    test_areIdenticalWordsInString_zeroWords();
+    test_areIdenticalWordsInString_Equal();
+    test_areIdenticalWordsInString_noEqual();
+}
+
 //тестирует функции, написанные выше
 void test(){
     test_findLength();
@@ -1369,6 +1433,7 @@ void test(){
     test_getWordBeforeFirstWordWithA();
     test_lastWordInFirstStringInSecondString();
     test_areEqualWordsInString();
+    test_areIdenticalWordsInString();
 }
 
 # endif
