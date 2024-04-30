@@ -18,6 +18,9 @@ add_library(str string/string_.h string/string_.c
 # описываем, что для запуска project потребуется сборка tasks
 target_link_libraries(C23Exe str)
 
+add_library(19_laba 19_laba/file.h 19_laba/file.c)
+target_link_libraries(C23Exe 19_laba)
+
 add_subdirectory(libs)
 target_link_libraries(C23Exe data_structures)
 target_link_libraries(C23Exe algorithms)
