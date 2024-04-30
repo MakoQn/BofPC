@@ -1,11 +1,8 @@
 # include <stdio.h>
-# include <assert.h>
-# include "string\string_.h"
+# include "E:\C23Exe\19_laba\file.h"
 
 int main() {
-
-    test();
+    testFile();
 
     return 0;
 }
-
