@@ -3,15 +3,18 @@
 
 # include "file.h"
 # include "E:\C23Exe\libs\data_structures\matrix\matrix.h"
+# include "E:\C23Exe\libs\data_structures\vector\vector.h"
+# include "E:\C23Exe\libs\data_structures\void_vector\void_vector.h"
 # include <memory.h>
+# include <math.h>
 # include "E:\C23Exe\string\string_.h"
 
 //транспонирует квадратную матрицу в файле
-void squarematricesFileTransponse(const char* filename) {
+void squareMatricesFileTransponse(const char* filename) {
     FILE *f = fopen(filename, "r");
 
     if (errno != 0) {
-        fprintf(stderr, "lol didnt open\n");
+        fprintf(stderr, "lol Task 1 didnt open\n");
 
         exit(1);
     }
@@ -49,22 +52,21 @@ void squarematricesFileTransponse(const char* filename) {
     f = fopen(filename, "w");
 
     if (errno != 0) {
-        fprintf(stderr, "lol didnt open\n");
+        fprintf(stderr, "lol Task 1 didnt open\n");
 
         exit(1);
     }
 
-    if (!feof(f))
-        for (int i = 0; i < count_of_matrices; i++){
-            fprintf(f, "%d\n", n_array[i]);
+    for (int i = 0; i < count_of_matrices; i++){
+        fprintf(f, "%d\n", n_array[i]);
 
-            for (int j = 0; j < n_array[i];j++) {
-                for (int k = 0; k < n_array[i]; k++)
-                    fprintf(f, "%d ", ms[i].values[j][k]);
+        for (int j = 0; j < n_array[i];j++) {
+            for (int k = 0; k < n_array[i]; k++)
+                fprintf(f, "%d ", ms[i].values[j][k]);
 
-                fprintf(f, "\n");
-            }
+            fprintf(f, "\n");
         }
+    }
 
     perror("Task 1 Write");
 
@@ -88,31 +90,29 @@ void test_squareMatrixFileTransponse(){
     FILE *f = fopen(filename, "w");
 
     if (errno != 0) {
-        fprintf(stderr, "lol didnt open\n");
+        fprintf(stderr, "lol Task 1 Test didnt open\n");
 
         exit(1);
     }
 
     fprintf(f, "%d\n", 3);
 
-    if (!feof(f)) {
-        for (size_t i = 0; i < 3; i++) {
-            for (size_t j = 0; j < 3; j++) {
-                fprintf(f, "%d ", m1.values[i][j]);
-            }
-
-            fprintf(f, "\n");
+    for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 0; j < 3; j++) {
+            fprintf(f, "%d ", m1.values[i][j]);
         }
 
-        fprintf(f, "%d\n", 2);
+        fprintf(f, "\n");
+    }
 
-        for (size_t i = 0; i < 2; i++) {
-            for (size_t j = 0; j < 2; j++) {
-                fprintf(f, "%d ", m2.values[i][j]);
-            }
+    fprintf(f, "%d\n", 2);
 
-            fprintf(f, "\n");
+    for (size_t i = 0; i < 2; i++) {
+        for (size_t j = 0; j < 2; j++) {
+            fprintf(f, "%d ", m2.values[i][j]);
         }
+
+        fprintf(f, "\n");
     }
 
     perror("Task 1 Write test");
@@ -122,12 +122,12 @@ void test_squareMatrixFileTransponse(){
     transposeSquareMatrix(&m1);
     transposeSquareMatrix(&m2);
 
-    squarematricesFileTransponse(filename);
+    squareMatricesFileTransponse(filename);
 
     f = fopen(filename, "r");
 
     if (errno != 0) {
-        fprintf(stderr, "lol didnt open\n");
+        fprintf(stderr, "lol Task 1 Test didnt open\n");
 
         exit(1);
     }
@@ -169,55 +169,153 @@ void test_squareMatrixFileTransponse(){
     freeMemMatrix(&test_m2);
 }
 
-int countOfRowsInFile(const char* filename){
-    FILE *f;
-    int errno;
-
-    int count_of_rows = 0;
-
-    f = fopen(filename, "r");
-
-    while (ferror(f) == 0){
-        count_of_rows++;
-
-        fscanf(f, "\n");
-    }
-
-    fclose(f);
-    perror("Task 1 Error: ");
-
-    return count_of_rows;
-}
-
 //переводит число с фиксированной точкой в число с плавающей точкой.
 void fixedPointIntoFloatPointFile(const char* filename) {
-    FILE *f;
-    int errno;
+    FILE *f = fopen(filename, "r");
 
-    int count_of_rows = countOfRowsInFile(f);
-    char **values = (char **) malloc(sizeof (char*) * count_of_rows);
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 2 didnt open\n");
 
-    f = fopen(filename, "r");
+        exit(1);
+    }
 
-    while (!ferror(f))
-        for (int i = 0; i < count_of_rows; i++)
-            fscanf(f, "%s\n", values[i]);
+    vectorVoid num = createVectorV(0, sizeof(float));
+    vector count_of_digits = createVector(0);
 
+    while (!feof(f)) {
+        float x;
+        fscanf(f, "%f", &x);
+
+        pushBackV(&num, &x);
+    }
+
+    perror("Task 2 Read");
 
     fclose(f);
-    perror("Error: ");
+
+    for (int i = 0; i < num.size; i++){
+        float x;
+
+        getVectorValueV(&num, i, &x);
+
+        int count = 0;
+
+        if (abs(x) >= 1) {
+            while (abs(x) >= 1) {
+                x /= 10;
+                count++;
+            }
+
+            x *= 10;
+            count--;
+        }else
+            while (abs(x) < 1) {
+                x *= 10;
+                count--;
+            }
+
+        setVectorValueV(&num, i, &x);
+        pushBack(&count_of_digits, count);
+    }
 
     f = fopen(filename, "w");
 
-    while (!ferror(f))
-        for (int i = 0; i < count_of_rows; i++)
-            fprintf(f, "%s.%s%sE\n", values[i][0], values[i][1], values[i][2]);
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 2 didnt open\n");
 
+        exit(1);
+    }
+
+    for (size_t i = 0; i < num.size; i++) {
+        float x;
+        int count;
+
+        getVectorValueV(&num, i, &x);
+        count = getVectorValue(&count_of_digits, i);
+
+        fprintf(f, "%.2fE%d\n", x, count);
+    }
+
+    perror("Task 2 Write");
+
+    fclose(f);
+
+    clearV(&num);
+    clear(&count_of_digits);
+}
+
+void test_fixedPointIntoFloatPointFile(){
+    const char filename[] = "E:\\C23Exe\\19_laba\\2\\task.txt";
+
+    float n1 = 100.1546;
+    float n2 = 0.5346;
+    float n3 = 0.000783;
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 2 Test didnt open\n");
+
+        exit(1);
+    }
+
+    fprintf(f, "%f\n", n1);
+    fprintf(f, "%f\n", n2);
+    fprintf(f, "%f", n3);
+
+    perror("Task 2 Write Test");
+
+    fclose(f);
+
+    fixedPointIntoFloatPointFile(filename);
+
+    f = fopen(filename, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 2 Test didnt open\n");
+
+        exit(1);
+    }
+
+    FILE *f_test;
+
+    const char filename_test[] = "E:\\C23Exe\\19_laba\\2\\test_task.txt";
+
+    f_test = fopen(filename_test, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 2 Test (test) didnt open\n");
+
+        exit(1);
+    }
+
+    while (!feof(f_test)){
+        char* s[100];
+        char* s_test[100];
+
+        fgets(s, 100, f);
+        fgets(s_test, 100, f_test);
+
+        printf("%s %s\n", s, s_test);
+
+        assert(strcmp(s, s_test) == 0);
+
+        perror("Task 2 s, s_test is equal");
+    }
+
+    perror("Task 2 Read Test file");
+
+    fclose(f);
+
+    perror("Task 2 Read Test file_test");
+
+    fclose(f_test);
 }
 
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
+    test_fixedPointIntoFloatPointFile();
 }
 
 # endif
