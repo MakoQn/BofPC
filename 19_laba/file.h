@@ -14,6 +14,9 @@ void squareMatrixFileTransponse(const char* filename);
 //переводит число с фиксированной точкой в число с плавающей точкой.
 void fixedPointIntoFloatPointFile(const char* filename);
 
+//решает арифметическое выражение из файла
+void solveTextExpressionFile(const char* filename);
+
 //проводит автоматизированное тестирование функций
 void testFile();
 
