@@ -23,6 +23,14 @@ void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence);
 //оставляет только самое длинное слово в файле
 void onlyLongestWordFile(const char* filename);
 
+typedef struct monomial {
+    int degree;
+    double coefficient;
+} monomial;
+
+//Удаляет многочлен, чей x является корнем
+void deletePolynomialFile(const char *filename, double x);
+
 //проводит автоматизированное тестирование функций
 void testFile();
 

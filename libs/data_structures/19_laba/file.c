@@ -7,6 +7,7 @@
 # include "E:\C23Exe\libs\data_structures\void_vector\void_vector.h"
 # include <memory.h>
 # include <math.h>
+# include <time.h>
 # include "E:\C23Exe\libs\data_structures\string\string_.h"
 # define NOT_ASCII -1
 # define CHARACTERS 97
@@ -1005,6 +1006,135 @@ void test_onlyLongestWordFile(){
     assert((strcmp(s1_read, "barbiturat") == 0) && (strcmp(s2_read, "") == 0));
 }
 
+typedef struct monomial {
+    int degree;
+    double coefficient;
+} monomial;
+
+double getValueOfMonomial(struct monomial mono, double x) {
+    return pow(x, mono.degree) * mono.coefficient;
+}
+
+//Удаляет многочлен, чей x является корнем
+void deletePolynomialFile(const char *filename, double x) {
+    vectorVoid v = createVectorV(16, sizeof(monomial));
+
+    FILE *file = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 6 didnt open\n");
+
+        exit(1);
+    }
+
+    monomial mono;
+
+    while (fread(&mono, sizeof( monomial), 1, file) == 1)
+        pushBackV(&v, &mono);
+
+    perror("Task 6 Read binary");
+
+    fclose(file);
+
+    file = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 6 didnt open\n");
+
+        exit(1);
+    }
+
+    monomial m;
+
+    vectorVoid temp = createVectorV(8, sizeof(monomial));
+
+    double result = 0;
+
+    for (size_t i = 0; i < v.size; i++) {
+        getVectorValueV(&v, i, &m);
+        pushBackV(&temp, &m);
+
+        result += getValueOfMonomial(m, x);
+
+        if (m.degree == 0) {
+            if (fabs(result) >= 0.001) {
+                monomial temp_mono;
+
+                for (size_t j = 0; j < temp.size; j++) {
+                    getVectorValueV(&temp, j, &temp_mono);
+
+                    fwrite(&temp_mono, sizeof( monomial), 1, file);
+                }
+            }
+
+            result = 0;
+        }
+    }
+
+    perror("Task 6 Write binary");
+
+    fclose(file);
+}
+
+void printPolynamial(char *filename) {
+    FILE *file = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 6 didnt open\n");
+
+        exit(1);
+    }
+
+    monomial mono;
+
+    while (fread(&mono, sizeof(monomial), 1, file) == 1) {
+        printf("%5.2lf * x^%lld + ", mono.coefficient, mono.degree);
+
+        if (mono.degree == 0)
+            printf("\b\b \n");
+    }
+
+    perror("Task 6 Read binary");
+
+    fclose(file);
+}
+
+void test_deletePolynomialFile(){
+    char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\6\\task.txt";
+
+    double x = 2.0;
+    monomial x1 = {.coefficient = 3.0, .degree = 2.0};
+    monomial x2 = {.coefficient = 10, .degree = -2};
+    monomial x3 = {.coefficient = 0, .degree = 0};
+
+    FILE *file = fopen(filename, "wb");
+
+    fwrite(&x1, sizeof(monomial), 1, file);
+    fwrite(&x2, sizeof(monomial), 1, file);
+    fwrite(&x3, sizeof(monomial), 1, file);
+
+    fclose(file);
+
+    deletePolynomialFile(filename, x);
+
+    file = fopen(filename, "rb");
+
+    monomial res_x1;
+    fread(&res_x1, sizeof(monomial), 1, file);
+
+    monomial res_x2;
+    fread(&res_x2, sizeof(monomial), 1, file);
+
+    monomial res_x3;
+    fread(&res_x3, sizeof(monomial), 1, file);
+
+    fclose(file);
+
+    assert(x1.coefficient - res_x1.coefficient <= 0.0001 && x1.degree == res_x1.degree);
+    assert(x2.coefficient - res_x2.coefficient <= 0.0001 && x2.degree == res_x2.degree);
+    assert(x3.coefficient - res_x3.coefficient <= 0.0001 && x3.degree == res_x3.degree);
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
@@ -1012,6 +1142,7 @@ void testFile(){
     test_solveTextExpressionFile();
     test_saveOnlySpecialWordsFile();
     test_onlyLongestWordFile();
+    test_deletePolynomialFile();
 }
 
 # endif
