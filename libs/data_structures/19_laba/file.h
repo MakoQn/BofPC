@@ -20,6 +20,9 @@ void solveTextExpressionFile(const char* filename);
 //сохраняет только те слова, которые содержат данную последовательность символов
 void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence);
 
+//оставляет только самое длинное слово в файле
+void onlyLongestWordFile(const char* filename);
+
 //проводит автоматизированное тестирование функций
 void testFile();
 

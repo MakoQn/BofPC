@@ -879,12 +879,139 @@ void test_saveOnlySpecialWordsFile(){
     test_saveOnlySpecialWordsFile_wordWillSave();
 }
 
+BagOfWords bag;
+
+//оставляет только самое длинное слово в файле
+void onlyLongestWordFile(const char* filename){
+    FILE* file = fopen(filename, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 5 didnt open\n");
+
+        exit(1);
+    }
+
+    char buff[MAX_WORD_SIZE] = "";
+    char* rec_ptr = stringBuf;
+
+    fgets(buff, sizeof(buff), file);
+
+    size_t length = strlen_(buff);
+
+    length = length == 0 ? 1 : length;
+
+    rec_ptr = copy(buff, buff + length - 1, rec_ptr);
+    *rec_ptr++ = ' ';
+
+    size_t amount_word_in_line = 0;
+    char* begin_search = stringBuf;
+
+    while (getWordWithoutSpace(begin_search, &bag.words[bag.size])) {
+        begin_search = bag.words[bag.size].end + 1;
+        amount_word_in_line++;
+        bag.size++;
+    }
+
+    while (fgets(buff, sizeof(buff), file)) {
+        rec_ptr = copy(buff, buff + strlen_(buff) - 1, rec_ptr);
+        *rec_ptr++ = ' ';
+
+        while (getWordWithoutSpace(begin_search, &bag.words[bag.size])) {
+            begin_search = bag.words[bag.size].end + 1;
+            bag.size++;
+        }
+    }
+
+    perror("Task 5 Read");
+
+    fclose(file);
+
+    file = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 5 didnt open\n");
+
+        exit(1);
+    }
+
+    for (size_t i = 0; i < bag.size; i += amount_word_in_line) {
+        WordDescriptor word_max_length = bag.words[i];
+        size_t max_length = word_max_length.end - word_max_length.begin + 1;
+
+        for (size_t j = i + 1; j < i + amount_word_in_line; j++) {
+            size_t current_length = bag.words[j].end - bag.words[j].begin + 1;
+
+            if (current_length > max_length) {
+                word_max_length = bag.words[j];
+                max_length = current_length;
+            }
+        }
+
+        char* write_ptr = word_max_length.begin;
+
+        while (write_ptr <= word_max_length.end) {
+            fprintf(file, "%c", *write_ptr);
+
+            write_ptr++;
+        }
+
+        fprintf(file, "\n");
+    }
+
+    freeBagOfWords(&bag);
+
+    perror("Task 5 Write");
+
+    fclose(file);
+}
+
+void test_onlyLongestWordFile(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\5\\task.txt";
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 5 Test didnt open\n");
+
+        exit(1);
+    }
+
+    char s1[] = "barbiturat";
+    char s2[] = "bar";
+
+    fprintf(f, "%s\n", s1);
+    fprintf(f, "%s\n", s2);
+
+    perror("Task 5 Test Write");
+
+    fclose(f);
+
+    onlyLongestWordFile(filename);
+
+    f = fopen(filename, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 5 Test didnt open\n");
+
+        exit(1);
+    }
+
+    char s1_read[50] = "";
+    fscanf(f, "%s\n", s1_read);
+
+    char s2_read[50] = "";
+    fscanf(f, "%s\n", s2_read);
+
+    assert((strcmp(s1_read, "barbiturat") == 0) && (strcmp(s2_read, "") == 0));
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
     test_fixedPointIntoFloatPointFile();
     test_solveTextExpressionFile();
     test_saveOnlySpecialWordsFile();
+    test_onlyLongestWordFile();
 }
 
 # endif

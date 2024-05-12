@@ -78,6 +78,8 @@ bool getWordWithoutSpace(char* begin_search, WordDescriptor * word);
 
 void getBagOfWords(BagOfWords *bag, char *s);
 
+void freeBagOfWords(BagOfWords * bag);
+
 typedef enum WordBeforeFirstWordWithAReturnCode {
     FIRST_WORD_WITH_A,
     NOT_FOUND_A_WORD_WITH_A,
