@@ -1029,7 +1029,7 @@ void deletePolynomialFile(const char *filename, double x) {
 
     monomial mono;
 
-    while (fread(&mono, sizeof( monomial), 1, file) == 1)
+    while (fread(&mono, sizeof(monomial), 1, file) == 1)
         pushBackV(&v, &mono);
 
     perror("Task 6 Read binary");
@@ -1063,7 +1063,7 @@ void deletePolynomialFile(const char *filename, double x) {
                 for (size_t j = 0; j < temp.size; j++) {
                     getVectorValueV(&temp, j, &temp_mono);
 
-                    fwrite(&temp_mono, sizeof( monomial), 1, file);
+                    fwrite(&temp_mono, sizeof(monomial), 1, file);
                 }
             }
 
