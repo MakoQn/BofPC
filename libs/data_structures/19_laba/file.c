@@ -1076,29 +1076,6 @@ void deletePolynomialFile(const char *filename, double x) {
     fclose(file);
 }
 
-void printPolynamial(char *filename) {
-    FILE *file = fopen(filename, "rb");
-
-    if (errno != 0) {
-        fprintf(stderr, "lol Task 6 didnt open\n");
-
-        exit(1);
-    }
-
-    monomial mono;
-
-    while (fread(&mono, sizeof(monomial), 1, file) == 1) {
-        printf("%5.2lf * x^%lld + ", mono.coefficient, mono.degree);
-
-        if (mono.degree == 0)
-            printf("\b\b \n");
-    }
-
-    perror("Task 6 Read binary");
-
-    fclose(file);
-}
-
 void test_deletePolynomialFile(){
     char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\6\\task.txt";
 
