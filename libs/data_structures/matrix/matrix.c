@@ -64,7 +64,7 @@ void inputMatrix(matrix *m){
     for (int i = 0; i < m->nRows;i++){
         printf("%d row\n", i + 1);
 
-        for (int j = 0; j < m->nCols;i++)
+        for (int j = 0; j < m->nCols;j++)
             scanf("%d", &m->values[i][j]);
     }
 

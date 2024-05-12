@@ -1326,6 +1326,133 @@ void test_positiveNegativeOrderFile(){
     test_positiveNegativeOrderFile_positiveAndNegative();
 }
 
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void transpMatrix(matrix *m) {
+    for (int i = 0; i < m->nRows; i++)
+        for (int j = i + 1; j < m->nCols; j++)
+            swap(&m->values[i][j], &m->values[j][i]);
+}
+
+//транспонирует матрицу в файле, если она не симметрична
+void transposeNonSymmetricMatrixFile(const char *filename) {
+    FILE *f = fopen(filename, "r+b");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 8 didnt open\n");
+
+        exit(1);
+    }
+
+    int n;
+    fread(&n, sizeof(int), 1, f);
+
+    while (!feof(f)) {
+        matrix m = getMemMatrix(n, n);
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                fread(&m.values[i][j], sizeof(int), 1, f);
+
+        if (!isSymmetricMatrix(&m)) {
+            transpMatrix(&m);
+
+            int count_of_elements = n * n;
+
+            fseek(f, -(long int) count_of_elements * sizeof(int), SEEK_CUR);
+
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    fwrite(&m.values[i][j], sizeof(int), 1, f);
+
+            fseek(f, (long int) count_of_elements * sizeof(int), SEEK_CUR);
+        }
+    }
+
+    perror("Task 8 Read binary");
+
+    fclose(f);
+}
+
+void test_transposeNonSymmetricMatrixFile(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\8\\task.txt";
+
+    FILE *f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 8 Test didnt open\n");
+
+        exit(1);
+    }
+
+    int n = 3;
+
+    matrix m1 = createMatrixFromArray((int[]) {1, 0, 0,
+                                               0, 1, 0,
+                                               0, 0, 1}, 3, 3);
+
+    matrix m2 = createMatrixFromArray((int[]) {5, 6, 9,
+                                               6, 5, 6,
+                                               7, 8, 9}, 3, 3);
+
+    fwrite(&n, sizeof(int), 1, f);
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            fwrite(&m1.values[i][j], sizeof(int), 1, f);
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            fwrite(&m2.values[i][j], sizeof(int), 1, f);
+
+    perror("Task 8 Write Test binary");
+
+    fclose(f);
+
+    transposeNonSymmetricMatrixFile(filename);
+
+    f = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 8 Test didnt open\n");
+
+        exit(1);
+    }
+
+    int read_n;
+
+    matrix check1 = createMatrixFromArray((int[]) {1, 0, 0,
+                                                   0, 1, 0,
+                                                   0, 0, 1}, 3, 3);
+
+    matrix check2 = createMatrixFromArray((int[]) {5, 6, 7,
+                                                   6, 5, 8,
+                                                   9, 6, 9}, 3, 3);
+
+    fread(&read_n, sizeof(int), 1, f);
+
+    matrix read_m1 = getMemMatrix(read_n, read_n);
+    matrix read_m2 = getMemMatrix(read_n, read_n);
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            fread(&read_m1.values[i][j], sizeof(int), 1, f);
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            fread(&read_m2.values[i][j], sizeof(int), 1, f);
+
+    perror("Task 8 Read Test binary");
+
+    fclose(f);
+
+    assert((areTwoMatricesEqual(&read_m1, &check1)) && (areTwoMatricesEqual(&read_m2, &check2)) && (read_n == n));
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
@@ -1335,6 +1462,7 @@ void testFile(){
     test_onlyLongestWordFile();
     test_deletePolynomialFile();
     test_positiveNegativeOrderFile();
+    test_transposeNonSymmetricMatrixFile();
 }
 
 # endif

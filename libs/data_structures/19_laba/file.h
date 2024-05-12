@@ -34,6 +34,9 @@ void deletePolynomialFile(const char *filename, double x);
 //Перемещает положительные числа в начало, а отрицательные - в конец
 void positiveNegativeOrderFile(const char* filename);
 
+//транспонирует матрицу в файле, если она не симметрична
+void transposeNonSymmetricMatrixFile(const char *filename);
+
 //проводит автоматизированное тестирование функций
 void testFile();
 
