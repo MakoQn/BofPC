@@ -31,6 +31,9 @@ typedef struct monomial {
 //Удаляет многочлен, чей x является корнем
 void deletePolynomialFile(const char *filename, double x);
 
+//Перемещает положительные числа в начало, а отрицательные - в конец
+void positiveNegativeOrderFile(const char* filename);
+
 //проводит автоматизированное тестирование функций
 void testFile();
 

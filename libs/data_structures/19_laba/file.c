@@ -1086,15 +1086,29 @@ void test_deletePolynomialFile(){
 
     FILE *file = fopen(filename, "wb");
 
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 6 Test didnt open\n");
+
+        exit(1);
+    }
+
     fwrite(&x1, sizeof(monomial), 1, file);
     fwrite(&x2, sizeof(monomial), 1, file);
     fwrite(&x3, sizeof(monomial), 1, file);
+
+    perror("Task 6 Write Test binary");
 
     fclose(file);
 
     deletePolynomialFile(filename, x);
 
     file = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 6 Test didnt open\n");
+
+        exit(1);
+    }
 
     monomial res_x1;
     fread(&res_x1, sizeof(monomial), 1, file);
@@ -1105,11 +1119,211 @@ void test_deletePolynomialFile(){
     monomial res_x3;
     fread(&res_x3, sizeof(monomial), 1, file);
 
+    perror("Task 6 Read Test binary");
+
     fclose(file);
 
     assert(x1.coefficient - res_x1.coefficient <= 0.0001 && x1.degree == res_x1.degree);
     assert(x2.coefficient - res_x2.coefficient <= 0.0001 && x2.degree == res_x2.degree);
     assert(x3.coefficient - res_x3.coefficient <= 0.0001 && x3.degree == res_x3.degree);
+}
+
+//Перемещает положительные числа в начало, а отрицательные - в конец
+void positiveNegativeOrderFile(const char* filename){
+    vector positive_num = createVector(2);
+    vector negative_num = createVector(2);
+
+    FILE* f = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 didnt open\n");
+
+        exit(1);
+    }
+
+    int curr;
+
+    while (fread(&curr, sizeof(int), 1, f) == 1) {
+        if (curr >= 0)
+            pushBack(&positive_num, curr);
+        else
+            pushBack(&negative_num, curr);
+    }
+
+    perror("Task 7 Read binary");
+
+    fclose(f);
+
+    f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 didnt open\n");
+
+        exit(1);
+    }
+
+    for (int i = 0; i < positive_num.size; i++)
+        fwrite(positive_num.data + i, sizeof(int), 1, f);
+
+    for (int i = 0; i < negative_num.size; i++)
+        fwrite(negative_num.data + i, sizeof(int), 1, f);
+
+    deleteVector(&positive_num);
+    deleteVector(&negative_num);
+
+    perror("Task 7 Write binary");
+
+    fclose(f);
+}
+
+void test_positiveNegativeOrderFile_negative(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\7\\task_1.txt";
+
+    int n1 = -712;
+    int n2 = -5556;
+    int n3 = -456;
+
+    FILE *file = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 Test1 didnt open\n");
+
+        exit(1);
+    }
+
+    fwrite(&n1, sizeof(int), 1, file);
+    fwrite(&n2, sizeof(int), 1, file);
+    fwrite(&n3, sizeof(int), 1, file);
+
+    perror("Task 7 Write Test1 binary");
+
+    fclose(file);
+
+    positiveNegativeOrderFile(filename);
+
+    file = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 Test1 didnt open\n");
+
+        exit(1);
+    }
+
+    int read_n1, read_n2, read_n3;
+
+    fread(&read_n1, sizeof(int), 1, file);
+    fread(&read_n2, sizeof(int), 1, file);
+    fread(&read_n3, sizeof(int), 1, file);
+
+    perror("Task 7 Read Test1 binary");
+
+    fclose(file);
+
+    assert(n1 == read_n1);
+    assert(n2 == read_n2);
+    assert(n3 == read_n3);
+}
+
+void test_positiveNegativeOrderFile_positive(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\7\\task_2.txt";
+
+    int n1 = 712;
+    int n2 = 5556;
+    int n3 = 456;
+
+    FILE *file = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 Test2 didnt open\n");
+
+        exit(1);
+    }
+
+    fwrite(&n1, sizeof(int), 1, file);
+    fwrite(&n2, sizeof(int), 1, file);
+    fwrite(&n3, sizeof(int), 1, file);
+
+    perror("Task 7 Write Test2 binary");
+
+    fclose(file);
+
+    positiveNegativeOrderFile(filename);
+
+    file = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 Test2 didnt open\n");
+
+        exit(1);
+    }
+
+    int read_n1, read_n2, read_n3;
+
+    fread(&read_n1, sizeof(int), 1, file);
+    fread(&read_n2, sizeof(int), 1, file);
+    fread(&read_n3, sizeof(int), 1, file);
+
+    perror("Task 7 Read Test2 binary");
+
+    fclose(file);
+
+    assert(n1 == read_n1);
+    assert(n2 == read_n2);
+    assert(n3 == read_n3);
+}
+
+void test_positiveNegativeOrderFile_positiveAndNegative(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\7\\task_3.txt";
+
+    int n1 = -712;
+    int n2 = 5556;
+    int n3 = -456;
+
+    FILE *file = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 Test3 didnt open\n");
+
+        exit(1);
+    }
+
+    fwrite(&n1, sizeof(int), 1, file);
+    fwrite(&n2, sizeof(int), 1, file);
+    fwrite(&n3, sizeof(int), 1, file);
+
+    perror("Task 7 Write Test2 binary");
+
+    fclose(file);
+
+    positiveNegativeOrderFile(filename);
+
+    file = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 7 Test3 didnt open\n");
+
+        exit(1);
+    }
+
+    int read_n1, read_n2, read_n3;
+
+    fread(&read_n1, sizeof(int), 1, file);
+    fread(&read_n2, sizeof(int), 1, file);
+    fread(&read_n3, sizeof(int), 1, file);
+
+    perror("Task 7 Read Test3 binary");
+
+    fclose(file);
+
+    assert(n2 == read_n1);
+    assert(n1 == read_n2);
+    assert(n3 == read_n3);
+}
+
+void test_positiveNegativeOrderFile(){
+    test_positiveNegativeOrderFile_negative();
+    test_positiveNegativeOrderFile_positive();
+    test_positiveNegativeOrderFile_positiveAndNegative();
 }
 
 //проводит автоматизированное тестирование функций
@@ -1120,6 +1334,7 @@ void testFile(){
     test_saveOnlySpecialWordsFile();
     test_onlyLongestWordFile();
     test_deletePolynomialFile();
+    test_positiveNegativeOrderFile();
 }
 
 # endif
