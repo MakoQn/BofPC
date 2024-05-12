@@ -7,8 +7,9 @@
 # include "E:\C23Exe\libs\data_structures\void_vector\void_vector.h"
 # include <memory.h>
 # include <math.h>
-# include "E:\C23Exe\string\string_.h"
+# include "E:\C23Exe\libs\data_structures\string\string_.h"
 # define NOT_ASCII -1
+# define CHARACTERS 97
 
 //транспонирует квадратную матрицу в файле
 void squareMatricesFileTransponse(const char* filename) {
@@ -75,7 +76,7 @@ void squareMatricesFileTransponse(const char* filename) {
 }
 
 void test_squareMatrixFileTransponse(){
-    const char filename[] = "E:\\C23Exe\\19_laba\\1\\task.txt";
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\1\\task.txt";
 
     matrix m1 = createMatrixFromArray((int []) {
                                     1,2,3,
@@ -246,7 +247,7 @@ void fixedPointIntoFloatPointFile(const char* filename) {
 }
 
 void test_fixedPointIntoFloatPointFile(){
-    const char filename[] = "E:\\C23Exe\\19_laba\\2\\task.txt";
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\2\\task.txt";
 
     float n1 = 100.1546;
     float n2 = 0.5346;
@@ -280,7 +281,7 @@ void test_fixedPointIntoFloatPointFile(){
 
     FILE *f_test;
 
-    const char filename_test[] = "E:\\C23Exe\\19_laba\\2\\test_task.txt";
+    const char filename_test[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\2\\test_task.txt";
 
     f_test = fopen(filename_test, "r");
 
@@ -448,7 +449,7 @@ void solveTextExpressionFile(const char* filename){
 }
 
 void test_solveTextExpressionFile_sampleAddition(){
-    const char filename[] = "E:\\C23Exe\\19_laba\\3\\task_1.txt";
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\3\\task_1.txt";
 
     FILE *f = fopen(filename, "w");
 
@@ -483,13 +484,13 @@ void test_solveTextExpressionFile_sampleAddition(){
 
     fclose(f);
 
-    char solve_exp[] = "1+1=2.00";
+    char solve_exp[] = "1+1 = 2.00";
 
-    assert(strcmp(read_exp, solve_exp));
+    assert(strcmp(read_exp, solve_exp) == 0);
 }
 
 void test_solveTextExpressionFile_sampleAdditionUnaryMinus(){
-    const char filename[] = "E:\\C23Exe\\19_laba\\3\\task_2.txt";
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\3\\task_2.txt";
 
     FILE *f = fopen(filename, "w");
 
@@ -524,13 +525,13 @@ void test_solveTextExpressionFile_sampleAdditionUnaryMinus(){
 
     fclose(f);
 
-    char solve_exp[] = "-1+1=0.00";
+    char solve_exp[] = "-1+1 = 0.00";
 
-    assert(strcmp(read_exp, solve_exp));
+    assert(strcmp(read_exp, solve_exp) == 0);
 }
 
 void test_solveTextExpressionFile_twoOperators(){
-    const char filename[] = "E:\\C23Exe\\19_laba\\3\\task_3.txt";
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\3\\task_3.txt";
 
     FILE *f = fopen(filename, "w");
 
@@ -565,13 +566,13 @@ void test_solveTextExpressionFile_twoOperators(){
 
     fclose(f);
 
-    char solve_exp[] = "1+5-9=-3.00";
+    char solve_exp[] = "1+5-9 = -3.00";
 
-    assert(strcmp(read_exp, solve_exp));
+    assert(strcmp(read_exp, solve_exp) == 0);
 }
 
 void test_solveTextExpressionFile_oneOperand(){
-    const char filename[] = "E:\\C23Exe\\19_laba\\3\\task_4.txt";
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\3\\task_4.txt";
 
     FILE *f = fopen(filename, "w");
 
@@ -606,13 +607,13 @@ void test_solveTextExpressionFile_oneOperand(){
 
     fclose(f);
 
-    char solve_exp[] = "2=2.00";
+    char solve_exp[] = "2 = 2.00";
 
-    assert(strcmp(read_exp, solve_exp));
+    assert(strcmp(read_exp, solve_exp) == 0);
 }
 
 void test_solveTextExpressionFile_secondOperationHighestPriority(){
-    const char filename[] = "E:\\C23Exe\\19_laba\\3\\task_5.txt";
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\3\\task_5.txt";
 
     FILE *f = fopen(filename, "w");
 
@@ -647,9 +648,9 @@ void test_solveTextExpressionFile_secondOperationHighestPriority(){
 
     fclose(f);
 
-    char solve_exp[] = "1+9/3=4.00";
+    char solve_exp[] = "1+9/3 = 4.00";
 
-    assert(strcmp(read_exp, solve_exp));
+    assert(strcmp(read_exp, solve_exp) == 0);
 }
 
 void test_solveTextExpressionFile(){
@@ -660,11 +661,233 @@ void test_solveTextExpressionFile(){
     test_solveTextExpressionFile_secondOperationHighestPriority();
 }
 
+bool lettersBelongWord(WordDescriptor word, WordDescriptor lettersSequence){
+    bool include[26] = {0};
+    char *begin = word.begin;
+    char *end = word.end + 1;
+
+    while (begin != end){
+        if(isalpha(*begin))
+            include[*begin-CHARACTERS] = 1;
+
+        begin++;
+    }
+
+    while (lettersSequence.begin <= lettersSequence.end){
+        if(!include[*lettersSequence.begin-CHARACTERS])
+            return 0;
+
+        lettersSequence.begin++;
+    }
+
+    return 1;
+}
+
+int compar(const void* s1, const void* s2) {
+    return *(const unsigned char*) s1 - *(const unsigned char*) s2;
+}
+
+void sort_word_letters(WordDescriptor * word) {
+    qsort(word->begin, word->end - word->begin + 1, sizeof(char), compar);
+}
+
+char stringBuf[MAX_STRING_SIZE + 1];
+
+//сохраняет только те слова, которые содержат данную последовательность символов
+void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence){
+    FILE *f = fopen(filename, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 didnt open\n");
+
+        exit(1);
+    }
+
+    fseek(f, 0, SEEK_END);
+
+    size_t length = ftell(f);
+
+    fseek(f, 0, SEEK_SET);
+
+    if (length == 0)
+        return;
+
+    fread(stringBuf, sizeof(char), length, f);
+    stringBuf[length] = '\0';
+
+    perror("Task 4 Read");
+
+    fclose(f);
+
+    WordDescriptor word;
+
+    getWordWithoutSpace(letters_sequence, &word);
+    sort_word_letters(&word);
+
+    BagOfWords words = {.size = 0};
+    char* begin_search = stringBuf;
+
+    while (getWordWithoutSpace(begin_search, &words.words[words.size])) {
+        begin_search = words.words[words.size].end + 1;
+        words.size++;
+    }
+
+    f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 didnt open\n");
+
+        exit(1);
+    }
+
+    for (size_t i = 0; i < words.size; i++) {
+        if (lettersBelongWord(words.words[i], word)) {
+            while (words.words[i].begin <= words.words[i].end) {
+                fprintf(f, "%c", *words.words[i].begin);
+
+                words.words[i].begin++;
+            }
+
+            fprintf(f, " ");
+        }
+    }
+
+    fprintf(f, "%c", '\0');
+
+    perror("Task 4 Write");
+
+    fclose(f);
+}
+
+void test_saveOnlySpecialWordsFile_zeroWordsInFile(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\4\\task_1.txt";
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 Test1 didnt open\n");
+
+        exit(1);
+    }
+
+    fputs("", f);
+
+    perror("Task 4 Test1 Write");
+
+    fclose(f);
+
+    char letters_sequence[] = "baobab";
+
+    saveOnlySpecialWordsFile(filename, letters_sequence);
+
+    f = fopen(filename, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 Test1 didnt open\n");
+
+        exit(1);
+    }
+
+    char read_words[100] = "";
+    fgets(read_words, 100, f);
+
+    perror("Task 4 Test1 Read");
+
+    fclose(f);
+
+    assert(strcmp(read_words, "") == 0);
+}
+
+void test_saveOnlySpecialWordsFile_noOneWillSave(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\4\\task_2.txt";
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 Test2 didnt open\n");
+
+        exit(1);
+    }
+
+    fputs("aboba", f);
+
+    perror("Task 4 Test2 Write");
+
+    fclose(f);
+
+    char letters_sequence[] = "pepe";
+
+    saveOnlySpecialWordsFile(filename, letters_sequence);
+
+    f = fopen(filename, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 Test2 didnt open\n");
+
+        exit(1);
+    }
+
+    char read_words[100] = "";
+    fgets(read_words, 100, f);
+
+    perror("Task 4 Test2 Read");
+
+    fclose(f);
+
+    assert(strcmp(read_words, "") == 0);
+}
+
+void test_saveOnlySpecialWordsFile_wordWillSave(){
+    const char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\4\\task_3.txt";
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 Test3 didnt open\n");
+
+        exit(1);
+    }
+
+    fputs("AABBAAAA AAAAAA DDDDCCC", f);
+
+    perror("Task 4 Test3 Write");
+
+    fclose(f);
+
+    char letters_sequence[] = "AABB";
+
+    saveOnlySpecialWordsFile(filename, letters_sequence);
+
+    f = fopen(filename, "r");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 4 Test3 didnt open\n");
+
+        exit(1);
+    }
+
+    char read_words[100] = "";
+    fgets(read_words, 100, f);
+
+    perror("Task 4 Test3 Read");
+
+    fclose(f);
+
+    assert(strcmp(read_words, "AABBAAAA") == 0);
+}
+
+void test_saveOnlySpecialWordsFile(){
+    test_saveOnlySpecialWordsFile_zeroWordsInFile();
+    test_saveOnlySpecialWordsFile_noOneWillSave();
+    test_saveOnlySpecialWordsFile_wordWillSave();
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
     test_fixedPointIntoFloatPointFile();
     test_solveTextExpressionFile();
+    test_saveOnlySpecialWordsFile();
 }
 
 # endif

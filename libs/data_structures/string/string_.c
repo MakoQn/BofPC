@@ -1740,7 +1740,6 @@ void test_lettersBelongString(){
     test_lettersBelongString_notInclude();
 }
 
-
 //тестирует функции, написанные выше
 void test(){
     test_findLength();

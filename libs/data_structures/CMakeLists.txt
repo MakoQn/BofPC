@@ -6,6 +6,10 @@ add_library(data_structures
 	void_vector/void_vector.c
 	matrix/matrix.c
         matrix/matrix.h
+	string/string_.c
+	string/string_.h
+	19_laba/file.c
+	19_laba/file.h
 )
 
 target_link_libraries(data_structures algorithms)

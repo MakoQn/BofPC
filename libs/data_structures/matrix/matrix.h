@@ -106,6 +106,6 @@ int getSum(int *a, int n);
 int max(int a, int b);
 
 //проводит автоматизированное тестирование библиотеки
-void test();
+void testMatrix();
 
 # endif

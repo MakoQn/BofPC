@@ -74,6 +74,10 @@ typedef struct BagOfWords {
     size_t size;
 } BagOfWords;
 
+bool getWordWithoutSpace(char* begin_search, WordDescriptor * word);
+
+void getBagOfWords(BagOfWords *bag, char *s);
+
 typedef enum WordBeforeFirstWordWithAReturnCode {
     FIRST_WORD_WITH_A,
     NOT_FOUND_A_WORD_WITH_A,

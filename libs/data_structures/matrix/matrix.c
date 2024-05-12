@@ -1980,7 +1980,7 @@ void test_getSpecialScalarProduct(){
 }
 
 //проводит автоматизированное тестирование библиотеки
-void test(){
+void testMatrix(){
     test_swapRows();
     test_swapColumns();
     test_insertionSortRowsMatrixByRowCriteria();

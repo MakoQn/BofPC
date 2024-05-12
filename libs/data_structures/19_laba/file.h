@@ -6,7 +6,7 @@
 # include "E:\C23Exe\libs\data_structures\void_vector\void_vector.h"
 # include <memory.h>
 # include <math.h>
-# include "E:\C23Exe\string\string_.h"
+# include "E:\C23Exe\libs\data_structures\string\string_.h"
 
 //транспонирует квадратную матрицу в файле
 void squareMatrixFileTransponse(const char* filename);
@@ -16,6 +16,9 @@ void fixedPointIntoFloatPointFile(const char* filename);
 
 //решает арифметическое выражение из файла
 void solveTextExpressionFile(const char* filename);
+
+//сохраняет только те слова, которые содержат данную последовательность символов
+void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence);
 
 //проводит автоматизированное тестирование функций
 void testFile();
