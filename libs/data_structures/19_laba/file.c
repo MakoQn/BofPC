@@ -661,23 +661,23 @@ void test_solveTextExpressionFile(){
     test_solveTextExpressionFile_secondOperationHighestPriority();
 }
 
-bool lettersBelongWord(WordDescriptor word, WordDescriptor lettersSequence){
+bool lettersBelongWord(WordDescriptor letters_sequence, WordDescriptor word) {
     bool include[26] = {0};
-    char *begin = word.begin;
-    char *end = word.end + 1;
+    char* begin = word.begin;
+    char* end = word.end + 1;
 
-    while (begin != end){
-        if(isalpha(*begin))
-            include[*begin-CHARACTERS] = 1;
+    while (begin != end) {
+        if (isalpha(*begin))
+            include[*begin - CHARACTERS] = 1;
 
         begin++;
     }
 
-    while (lettersSequence.begin <= lettersSequence.end){
-        if(!include[*lettersSequence.begin-CHARACTERS])
+    while (letters_sequence.begin <= letters_sequence.end) {
+        if (!include[*letters_sequence.begin - CHARACTERS])
             return 0;
 
-        lettersSequence.begin++;
+        letters_sequence.begin++;
     }
 
     return 1;
@@ -687,15 +687,11 @@ int compar(const void* s1, const void* s2) {
     return *(const unsigned char*) s1 - *(const unsigned char*) s2;
 }
 
-void sort_word_letters(WordDescriptor * word) {
-    qsort(word->begin, word->end - word->begin + 1, sizeof(char), compar);
-}
-
 char stringBuf[MAX_STRING_SIZE + 1];
 
 //сохраняет только те слова, которые содержат данную последовательность символов
 void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence){
-    FILE *f = fopen(filename, "r");
+    FILE* file = fopen(filename, "r");
 
     if (errno != 0) {
         fprintf(stderr, "lol Task 4 didnt open\n");
@@ -703,26 +699,27 @@ void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence){
         exit(1);
     }
 
-    fseek(f, 0, SEEK_END);
+    fseek(file, 0, SEEK_END);
 
-    size_t length = ftell(f);
+    size_t length = ftell(file);
 
-    fseek(f, 0, SEEK_SET);
+    fseek(file, 0, SEEK_SET);
 
     if (length == 0)
         return;
 
-    fread(stringBuf, sizeof(char), length, f);
+    fread(stringBuf, sizeof(char), length, file);
+
     stringBuf[length] = '\0';
 
     perror("Task 4 Read");
 
-    fclose(f);
+    fclose(file);
 
     WordDescriptor word;
 
     getWordWithoutSpace(letters_sequence, &word);
-    sort_word_letters(&word);
+    qsort(word.begin, word.end - word.begin + 1, sizeof(char), compar);
 
     BagOfWords words = {.size = 0};
     char* begin_search = stringBuf;
@@ -732,7 +729,7 @@ void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence){
         words.size++;
     }
 
-    f = fopen(filename, "w");
+    file = fopen(filename, "w");
 
     if (errno != 0) {
         fprintf(stderr, "lol Task 4 didnt open\n");
@@ -741,22 +738,22 @@ void saveOnlySpecialWordsFile(const char* filename, char* letters_sequence){
     }
 
     for (size_t i = 0; i < words.size; i++) {
-        if (lettersBelongWord(words.words[i], word)) {
+        if (lettersBelongWord(word, words.words[i])) {
             while (words.words[i].begin <= words.words[i].end) {
-                fprintf(f, "%c", *words.words[i].begin);
+                fprintf(file, "%c", *words.words[i].begin);
 
                 words.words[i].begin++;
             }
 
-            fprintf(f, " ");
+            fprintf(file, " ");
         }
     }
 
-    fprintf(f, "%c", '\0');
+    fprintf(file, "%c", '\0');
 
     perror("Task 4 Write");
 
-    fclose(f);
+    fclose(file);
 }
 
 void test_saveOnlySpecialWordsFile_zeroWordsInFile(){
@@ -873,7 +870,7 @@ void test_saveOnlySpecialWordsFile_wordWillSave(){
 
     fclose(f);
 
-    assert(strcmp(read_words, "AABBAAAA") == 0);
+    assert(strcmp(read_words, "AABBAAAA ") == 0);
 }
 
 void test_saveOnlySpecialWordsFile(){
