@@ -7,6 +7,8 @@
 # include <memory.h>
 # include <math.h>
 # include "E:\C23Exe\libs\data_structures\string\string_.h"
+# define MAX_LENGTH_STRING 200
+# define MAX_AMOUNT_SPORTSMAN 20
 
 //транспонирует квадратную матрицу в файле
 void squareMatrixFileTransponse(const char* filename);
@@ -36,6 +38,11 @@ void positiveNegativeOrderFile(const char* filename);
 
 //транспонирует матрицу в файле, если она не симметрична
 void transposeNonSymmetricMatrixFile(const char *filename);
+
+typedef struct sportsman {
+    char name[MAX_LENGTH_STRING];
+    int max_result;
+} sportsman;
 
 //Отбирает лучших спортсменов в команду
 void createBestTeamFile(const char *filename, const int n);
