@@ -14,6 +14,30 @@
 # define MAX_LENGTH_STRING 200
 # define MAX_AMOUNT_SPORTSMAN 20
 
+void generateRandomSquareMatrixFile(const char *filename, size_t n) {
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateRandomMatrixFile didnt open\n");
+
+        exit(1);
+    }
+
+    fprintf(f, "%lld\n", n);
+
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++)
+            fprintf(f, "%d ", rand() % 10);
+
+        fprintf(f, "\n");
+    }
+
+    perror("generateRandomMatrixFile Write");
+
+    fclose(f);
+}
 
 //транспонирует квадратную матрицу в файле
 void squareMatricesFileTransponse(const char* filename) {
@@ -178,6 +202,25 @@ void test_squareMatrixFileTransponse(){
     freeMemMatrix(&test_m2);
 }
 
+void generateFloatFile(const char* filename, int n) {
+    srand(time(NULL));
+
+    FILE* f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateFloat didnt open\n");
+
+        exit(1);
+    }
+
+    for (size_t i = 0; i < n; i++)
+        fprintf(f, "%f ", 10.0 * rand() / RAND_MAX);
+
+    perror("generateFloat Write");
+
+    fclose(f);
+}
+
 //переводит число с фиксированной точкой в число с плавающей точкой.
 void fixedPointIntoFloatPointFile(const char* filename) {
     FILE *f = fopen(filename, "r");
@@ -317,6 +360,36 @@ void test_fixedPointIntoFloatPointFile(){
     perror("Task 2 Read Test file_test");
 
     fclose(f_test);
+}
+
+void generateExpressionFile(char *filename) {
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateExpression didnt open\n");
+
+        exit(1);
+    }
+
+    int n1 = rand() % 10;
+    int n2 = rand() % 10;
+    int n3 = rand() % 10;
+
+    char operators[] = "*+-/";
+
+    char operator_1 = operators[rand() % 4];
+    char operator_2 = operators[rand() % 4];
+
+    if (rand() % 2) {
+        fprintf(f, "%d %c %d", n1, operator_1, n2);
+    } else
+        fprintf(f, "%d %c %d %c %d", n1, operator_1, n2, operator_2, n3);
+
+    perror("generateExpression Write");
+
+    fclose(f);
 }
 
 //решает арифметическое выражение из файла
@@ -668,6 +741,25 @@ void test_solveTextExpressionFile(){
     test_solveTextExpressionFile_secondOperationHighestPriority();
 }
 
+void generateStringFile(const char* filename, char* source_string) {
+    FILE* f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateStringFile didnt open\n");
+
+        exit(1);
+    }
+
+    int string_length = strlen_(source_string);
+
+    for (size_t i = 0; i <= string_length; i++)
+        fprintf(f, "%c", source_string[i]);
+
+    perror("generateStringFile Write");
+
+    fclose(f);
+}
+
 bool lettersBelongWord(WordDescriptor letters_sequence, WordDescriptor word) {
     bool include[26] = {0};
     char* begin = word.begin;
@@ -886,6 +978,35 @@ void test_saveOnlySpecialWordsFile(){
     test_saveOnlySpecialWordsFile_wordWillSave();
 }
 
+void generateStringsFile(const char *filename, int lines, int count_of_words) {
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "w");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateStringsFile didnt open\n");
+
+        exit(1);
+    }
+
+    int word_size = rand() % lines;
+
+    for (int i = 0; i < lines; ++i) {
+        for (int j = 0; j < count_of_words; ++j) {
+            for (int k = 0; k < rand() % word_size + 1; ++k)
+                fprintf(f, "%c", 'a');
+
+            fprintf(f, " ");
+        }
+
+        fprintf(f, "\n");
+    }
+
+    perror("generateStringsFile Write");
+
+    fclose(f);
+}
+
 BagOfWords bag;
 
 //оставляет только самое длинное слово в файле
@@ -1021,6 +1142,37 @@ double getValueOfMonomial(struct monomial mono, double x) {
     return pow(x, mono.degree) * mono.coefficient;
 }
 
+void generatePolynomialFile(const char *filename) {
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generatePolynomialFile didnt open\n");
+
+        exit(1);
+    }
+
+    int count_of_polynamial = rand() % + 2;
+
+    for (int i = 0; i < count_of_polynamial; ++i) {
+        count_of_polynamial = rand() % + 2;
+
+        monomial mono;
+
+        for (int j = 0; j <= count_of_polynamial; ++j) {
+            mono.degree = count_of_polynamial - i;
+            mono.coefficient = 2.0 * rand() / RAND_MAX - 1.0;
+
+            fwrite(&mono, sizeof(monomial), 1, f);
+        }
+    }
+
+    perror("generatePolynomialFile Write binary");
+
+    fclose(f);
+}
+
 //Удаляет многочлен, чей x является корнем
 void deletePolynomialFile(const char *filename, double x) {
     vectorVoid v = createVectorV(16, sizeof(monomial));
@@ -1135,6 +1287,30 @@ void test_deletePolynomialFile(){
     assert(x1.coefficient - res_x1.coefficient <= 0.0001 && x1.degree == res_x1.degree);
     assert(x2.coefficient - res_x2.coefficient <= 0.0001 && x2.degree == res_x2.degree);
     assert(x3.coefficient - res_x3.coefficient <= 0.0001 && x3.degree == res_x3.degree);
+}
+
+void generateNumbersFile(char *filename){
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateNumbersFile didnt open\n");
+
+        exit(1);
+    }
+
+    int count_of_numbers = (int) rand() % 10 + 1;
+
+    for (int i = 0; i < count_of_numbers; ++i) {
+        int x = rand() % 200 - 100;
+
+        fwrite(&x, sizeof(int), 1, f);
+    }
+
+    perror("generateNumbersFile Write binary");
+
+    fclose(f);
 }
 
 //Перемещает положительные числа в начало, а отрицательные - в конец
@@ -1347,6 +1523,73 @@ void transpMatrix(matrix *m) {
             swap(&m->values[i][j], &m->values[j][i]);
 }
 
+void generateNonSymmetricSquareMatrixFile(const char *filename) {
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateNonSymmetricSquareMatrix didnt open\n");
+
+        exit(1);
+    }
+
+    int n = rand() % 2 + 2;
+    fwrite(&n, sizeof(int), 1, f);
+    int count_of_matrix = rand() % 3 + 1;
+
+    for (int k = 0; k < count_of_matrix; k++) {
+        matrix m = getMemMatrix(n, n);
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                m.values[i][j] = rand() % 100;
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                fwrite(&m.values[i][j], sizeof(int), n * n, f);
+    }
+
+    perror("generateNonSymmetricSquareMatrix Write binary");
+
+    fclose(f);
+}
+
+void generateSymmetricMatrixFile(const char *filename) {
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateSymmetricMatrix didnt open\n");
+
+        exit(1);
+    }
+
+    int n = rand() % 2 + 2;
+    fwrite(&n, sizeof(int), 1, f);
+    int count_of_matrix = rand() % 3 + 1;
+
+    for (int k = 0; k < count_of_matrix; k++) {
+        matrix m = getMemMatrix(n, n);
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                if (i < j){
+                    m.values[i][j] = rand() % 100;
+                    m.values[i][j] = m.values[j][i];
+                }
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                fwrite(&m.values[i][j], sizeof(int), n * n, f);
+    }
+
+    perror("generateSymmetricMatrix Write binary");
+
+    fclose(f);
+}
+
 //транспонирует матрицу в файле, если она не симметрична
 void transposeNonSymmetricMatrixFile(const char *filename) {
     FILE *f = fopen(filename, "r+b");
@@ -1466,6 +1709,45 @@ typedef struct sportsman {
     char name[MAX_LENGTH_STRING];
     int max_result;
 } sportsman;
+
+static void generateNameFile(char *s) {
+    int name_length = rand() % 30 + 5;
+
+    char *rec_ptr = s;
+
+    for (int i = 0; i < name_length; i++) {
+        *rec_ptr = rand() % 26 + 97;
+        rec_ptr++;
+    }
+
+    *rec_ptr = '\0';
+}
+
+void generateTeamFile(const char *filename, const int n) {
+    srand(time(NULL));
+
+    FILE *f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol generateTeamFile didnt open\n");
+
+        exit(1);
+    }
+
+    for (int i = 0; i < n; i++) {
+        sportsman s;
+
+        generateNameFile(s.name);
+
+        s.max_result = (double) rand() / 100;
+
+        fwrite(&s, sizeof(sportsman), 1, f);
+    }
+
+    perror("generateTeamFile Write binary");
+
+    fclose(f);
+}
 
 void fromHiToLo(sportsman sm[], const int n) {
     for (int i = 0; i < n; i++)
@@ -1588,6 +1870,74 @@ typedef struct order {
     char order_name[MAX_LENGTH_STRING];
     int quantity;
 } order;
+
+void generateWarehouseAndOrders(const char* f_filename, const char* q_filename) {
+    srand(time(NULL));
+
+    FILE* f = fopen(f_filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "generateWarehouseAndOrders didnt open\n");
+
+        exit(1);
+    }
+
+    FILE* q = fopen(q_filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "generateWarehouseAndOrders didnt open\n");
+
+        exit(1);
+    }
+
+    int count_of_product = rand() % 15 + 1;
+    int count_of_order = count_of_product % 2 + 1;
+
+    for (int i = 0; i < count_of_product; i++) {
+        warehouse product = {.price = rand() % 100 + 1, .quantity = rand() % 20 + 1, .total_cost = product.price * product.quantity};
+        order ord;
+
+        int name_length = rand() % 10 + 1;
+        char* product_rec_ptr = product.name_of_product;
+        char* order_rec_ptr = ord.order_name;
+
+        for (int j = 0; j < name_length; j++) {
+            char ch = rand() % 26 + 97;
+
+            *product_rec_ptr = ch;
+            product_rec_ptr++;
+
+            if (count_of_order > 0) {
+                *order_rec_ptr = ch;
+                order_rec_ptr++;
+            }
+        }
+
+        *product_rec_ptr = '\0';
+
+        if (count_of_order > 0) {
+            *order_rec_ptr = '\0';
+
+            ord.quantity = rand() % 25 + 1;
+        }
+
+        fwrite(&product, sizeof(warehouse), 1, f);
+
+        if (count_of_order > 0)
+            fwrite(&ord, sizeof(order), 1, q);
+
+
+        count_of_order--;
+    }
+
+    perror("generateWarehouseAndOrders F Write binary");
+
+    fclose(f);
+
+    perror("generateWarehouseAndOrders Q Write binary");
+
+    fclose(q);
+}
 
 //Обновляет информацию в файле f об оставшихся продуктах на складе, исходя из информации о заказах в файле q
 void refreshInformationFile(const char* f_filename, const char* q_filename){
