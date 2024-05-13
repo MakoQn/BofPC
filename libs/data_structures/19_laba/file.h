@@ -47,6 +47,21 @@ typedef struct sportsman {
 //Отбирает лучших спортсменов в команду
 void createBestTeamFile(const char *filename, const int n);
 
+typedef struct warehouse {
+    char name_of_product[MAX_LENGTH_STRING];
+    int price;
+    int total_cost;
+    int quantity;
+} warehouse;
+
+typedef struct order {
+    char order_name[MAX_LENGTH_STRING];
+    int quantity;
+} order;
+
+//Обновляет информацию в файле f об оставшихся продуктах на складе, исходя из информации о заказах в файле q
+void refreshInformationFile(const char* f_filename, const char* q_filename);
+
 //проводит автоматизированное тестирование функций
 void testFile();
 
