@@ -11,6 +11,9 @@
 # include "E:\C23Exe\libs\data_structures\string\string_.h"
 # define NOT_ASCII -1
 # define CHARACTERS 97
+# define MAX_LENGTH_STRING 200
+# define MAX_AMOUNT_SPORTSMAN 20
+
 
 //транспонирует квадратную матрицу в файле
 void squareMatricesFileTransponse(const char* filename) {
@@ -1453,6 +1456,121 @@ void test_transposeNonSymmetricMatrixFile(){
     assert((areTwoMatricesEqual(&read_m1, &check1)) && (areTwoMatricesEqual(&read_m2, &check2)) && (read_n == n));
 }
 
+typedef struct sportsman {
+    char name[MAX_LENGTH_STRING];
+    int max_result;
+} sportsman;
+
+void fromHiToLo(sportsman sm[], const int n) {
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (sm[j].max_result < sm[j + 1].max_result) {
+                sportsman temp = sm[j];
+
+                sm[j] = sm[j + 1];
+                sm[j + 1] = temp;
+            }
+}
+
+//Отбирает лучших спортсменов в команду
+void createBestTeamFile(const char *filename, const int n){
+    FILE *f = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 9 didnt open\n");
+
+        exit(1);
+    }
+
+    sportsman *team = (sportsman*)malloc(MAX_AMOUNT_SPORTSMAN * sizeof(sportsman));
+    sportsman *rec = team;
+
+    int count_of_sportsmans = 0;
+
+    while (fread(rec, sizeof(sportsman), 1, f) == 1) {
+        rec++;
+        count_of_sportsmans++;
+    }
+
+    perror("Task 9 Read binary");
+
+    fclose(f);
+
+    f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 9 didnt open\n");
+
+        exit(1);
+    }
+
+    fromHiToLo(team, count_of_sportsmans);
+
+    int count_of_sportsmans_in_team = count_of_sportsmans >= n ? n : count_of_sportsmans;
+
+    for (int i = 0; i < count_of_sportsmans_in_team; i++) {
+        fwrite(team + i, sizeof(sportsman), 1, f);
+    }
+
+    free(team);
+
+    perror("Task 9 Write binary");
+
+    fclose(f);
+}
+
+void test_createBestTeamFile(){
+    char filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\9\\task.txt";
+
+    FILE *f = fopen(filename, "wb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 9 Test didnt open\n");
+
+        exit(1);
+    }
+
+    sportsman s1 = {.name = "Max", .max_result = 395};
+    sportsman s2 = {.name = "Lewis", .max_result = 395};
+    sportsman s3 = {.name = "Alonso", .max_result = 393};
+    sportsman s4 = {.name = "Sorgio", .max_result = 396};
+    sportsman s5 = {.name = "Estenba", .max_result = 200};
+
+    fwrite(&s1, sizeof(sportsman), 1, f);
+    fwrite(&s2, sizeof(sportsman), 1, f);
+    fwrite(&s3, sizeof(sportsman), 1, f);
+    fwrite(&s4, sizeof(sportsman), 1, f);
+    fwrite(&s5, sizeof(sportsman), 1, f);
+
+    perror("Task 9 Write Test binary");
+
+    fclose(f);
+
+    createBestTeamFile(filename, 5);
+
+    f = fopen(filename, "rb");
+
+    if (errno != 0) {
+        fprintf(stderr, "lol Task 9 Test didnt open\n");
+
+        exit(1);
+    }
+
+    sportsman read_s1, read_s2, read_s3, read_s4;
+
+    fread(&read_s1, sizeof(sportsman), 1, f);
+    fread(&read_s2, sizeof(sportsman), 1, f);
+    fread(&read_s3, sizeof(sportsman), 1, f);
+    fread(&read_s4, sizeof(sportsman), 1, f);
+
+    perror("Task 9 Read Test binary");
+
+    fclose(f);
+
+    assert((strcmp(&s4.name, &read_s1.name) == 0) && (strcmp(&s1.name, &read_s2.name) == 0)
+            && (strcmp(&s2.name, &read_s3.name) == 0) && (strcmp(&s3.name, &read_s4.name) == 0));
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
@@ -1463,6 +1581,7 @@ void testFile(){
     test_deletePolynomialFile();
     test_positiveNegativeOrderFile();
     test_transposeNonSymmetricMatrixFile();
+    test_createBestTeamFile();
 }
 
 # endif

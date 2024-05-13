@@ -37,6 +37,9 @@ void positiveNegativeOrderFile(const char* filename);
 //транспонирует матрицу в файле, если она не симметрична
 void transposeNonSymmetricMatrixFile(const char *filename);
 
+//Отбирает лучших спортсменов в команду
+void createBestTeamFile(const char *filename, const int n);
+
 //проводит автоматизированное тестирование функций
 void testFile();
 
