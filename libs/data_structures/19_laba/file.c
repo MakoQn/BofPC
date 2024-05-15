@@ -1526,6 +1526,8 @@ void generateNonSymmetricSquareMatrixFile(const char *filename) {
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
                 fwrite(&m.values[i][j], sizeof(int), n * n, f);
+
+        freeMemMatrix(&m);
     }
 
     perror("generateNonSymmetricSquareMatrix Write binary");
@@ -1561,6 +1563,8 @@ void generateSymmetricMatrixFile(const char *filename) {
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
                 fwrite(&m.values[i][j], sizeof(int), n * n, f);
+
+        freeMemMatrix(&m);
     }
 
     perror("generateSymmetricMatrix Write binary");
@@ -1601,6 +1605,8 @@ void transposeNonSymmetricMatrixFile(const char *filename) {
 
             fseek(f, (long int) count_of_elements * sizeof(int), SEEK_CUR);
         }
+
+        freeMemMatrix(&m);
     }
 
     perror("Task 8 Read binary");
@@ -1681,6 +1687,13 @@ void test_transposeNonSymmetricMatrixFile(){
     fclose(f);
 
     assert((areTwoMatricesEqual(&read_m1, &check1)) && (areTwoMatricesEqual(&read_m2, &check2)) && (read_n == n));
+
+    freeMemMatrix(&m1);
+    freeMemMatrix(&m2);
+    freeMemMatrix(&check1);
+    freeMemMatrix(&check2);
+    freeMemMatrix(&read_m1);
+    freeMemMatrix(&read_m2);
 }
 
 typedef struct sportsman {
@@ -1838,14 +1851,14 @@ void test_createBestTeamFile(){
 }
 
 typedef struct warehouse {
-    char name_of_product[MAX_LENGTH_STRING];
+    char *name_of_product;
     int price;
     int total_cost;
     int quantity;
 } warehouse;
 
 typedef struct order {
-    char order_name[MAX_LENGTH_STRING];
+    char *order_name;
     int quantity;
 } order;
 
@@ -1918,92 +1931,56 @@ void generateWarehouseAndOrders(const char* f_filename, const char* q_filename) 
 }
 
 //Обновляет информацию в файле f об оставшихся продуктах на складе, исходя из информации о заказах в файле q
-void refreshInformationFile(const char* f_filename, const char* q_filename){
-    vectorVoid warehouse_product = createVectorV(5, sizeof(warehouse));
-    vectorVoid order_product = createVectorV(5, sizeof(order));
+void refreshInformationFile(const char* f_filename, size_t *products_size, const char* q_filename, size_t orders_size){
+    FILE *file;
+    warehouse products[*products_size];
+    order orders[orders_size];
+    size_t products_left_size = 0;
+    warehouse products_left[*products_size];
 
-    FILE* f = fopen(f_filename, "rb");
+    file = fopen(f_filename, "rb");
 
-    if (errno != 0) {
-        fprintf(stderr, "lol Task 10 didnt open\n");
+    fread(products, sizeof(warehouse), *products_size, file);
 
-        exit(1);
-    }
+    fclose(file);
 
-    warehouse product;
+    file = fopen(q_filename, "rb");
 
-    while (fread(&product, sizeof(warehouse), 1, f) == 1)
-        pushBackV(&warehouse_product, &product);
+    fread(orders, sizeof(order), orders_size, file);
 
-    perror("Task 10 F Read binary");
+    fclose(file);
 
-    fclose(f);
-
-    FILE* q = fopen(q_filename, "rb");
-
-    if (errno != 0) {
-        fprintf(stderr, "lol Task 10 didnt open\n");
-
-        exit(1);
-    }
-
-    order ord;
-
-    while (fread(&ord, sizeof(order), 1, q) == 1)
-        pushBackV(&order_product, &ord);
-
-    for (size_t i = 0; i < warehouse_product.size; i++) {
-        warehouse current_product;
-
-        getVectorValueV(&warehouse_product, i, &current_product);
-
-        for (size_t j = 0; j < order_product.size; j++) {
-            order current_order;
-
-            getVectorValueV(&order_product, j, &current_order);
-            if (strcmp(current_product.name_of_product, current_order.order_name) == 0) {
-                current_product.quantity = product.quantity > ord.quantity ? product.quantity - ord.quantity : 0;
-                current_product.total_cost = product.price * current_product.quantity;
-
-                setVectorValueV(&warehouse_product, i, &current_product);
+    for (size_t j = 0; j < *products_size; j++) {
+        for (size_t i = 0; i < orders_size; i++) {
+            if (products[j].name_of_product == orders[i].order_name) {
+                if (products[j].quantity > orders[i].quantity) {
+                    products_left[products_left_size].name_of_product = orders[i].order_name;
+                    products_left[products_left_size].price = products[j].price;
+                    products_left[products_left_size].quantity = products[j].quantity - orders[i].quantity;
+                    products_left[products_left_size].total_cost = products_left[products_left_size].price * products_left[products_left_size].quantity;
+                    products_left_size++;
+                }
             }
         }
     }
 
-    f = fopen(f_filename, "wb");
+    *products_size = products_left_size;
 
-    if (errno != 0) {
-        fprintf(stderr, "lol Task 10 didnt open\n");
+    file = fopen(f_filename, "wb");
 
-        exit(1);
-    }
+    fwrite(products_left, sizeof(warehouse), products_left_size, file);
 
-    for (size_t i = 0; i < warehouse_product.size; i++) {
-        warehouse read_product;
-
-        getVectorValueV(&warehouse_product, i, &read_product);
-        if (read_product.quantity != 0)
-            fwrite(&read_product, sizeof(warehouse), 1, f);
-    }
-
-    clearV(&warehouse_product);
-    clearV(&order_product);
-
-    perror("Task 10 F Write binary");
-
-    fclose(f);
-
-    perror("Task 10 Q Read binary");
-
-    fclose(q);
+    fclose(file);
 }
 
 void test_refreshInformationFile(){
     const char f_filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\10\\f.txt";
     const char q_filename[] = "E:\\C23Exe\\libs\\data_structures\\19_laba\\10\\q.txt";
 
+    size_t count_of_product = 2;
     warehouse p1 = {.name_of_product = "bread", .price = 5, .total_cost = 15, .quantity = 3};
     warehouse p2 = {.name_of_product = "butter", .price = 7, .total_cost = 14, .quantity = 2};
+    size_t count_of_order = 2;
     order ord1 = {.order_name = "bread", .quantity = 2};
     order ord2 = {.order_name = "butter", .quantity = 5};
 
@@ -2037,7 +2014,7 @@ void test_refreshInformationFile(){
 
     fclose(f);
 
-    refreshInformationFile(f_filename, q_filename);
+    refreshInformationFile(f_filename, &count_of_product, q_filename, count_of_order);
 
     warehouse read_product;
 
@@ -2058,6 +2035,40 @@ void test_refreshInformationFile(){
     assert((strcmp(p1.name_of_product, read_product.name_of_product) == 0) && (read_product.quantity == 1) && (read_product.total_cost == 5));
 }
 
+void fulfillQuery(matrix *m, matrix *array_of_query){
+    for (size_t i = 0; i < array_of_query->nRows; i++)
+        for (size_t j = array_of_query->values[i][0]; j <=  array_of_query->values[i][2]; j++)
+            for (size_t k = array_of_query->values[i][1]; k <=  array_of_query->values[i][3]; k++)
+                m->values[j][k]++;
+}
+
+void test_fulfillQuery(){
+    matrix m = createMatrixFromArray((int []){
+                                    0,0,0,
+                                    0,0,0,
+                                    0,0,0
+    }, 3, 3);
+
+    matrix array_of_query = createMatrixFromArray((int []){
+            1,1,2, 2,
+            0,0,1, 1
+    }, 2, 4);
+
+    fulfillQuery(&m, &array_of_query);
+
+    matrix expected_m = createMatrixFromArray((int []){
+            1,1,0,
+            1,2,1,
+            0,1,1
+    }, 3, 3);
+
+    assert(areTwoMatricesEqual(&m, &expected_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&array_of_query);
+    freeMemMatrix(&expected_m);
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
@@ -2070,6 +2081,7 @@ void testFile(){
     test_transposeNonSymmetricMatrixFile();
     test_createBestTeamFile();
     test_refreshInformationFile();
+    test_fulfillQuery();
 }
 
 # endif
