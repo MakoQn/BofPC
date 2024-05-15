@@ -409,91 +409,39 @@ void solveTextExpressionFile(const char* filename){
 
     fscanf(f, "%d %c %d %c %d", &operand_1, &operator_1, &operand_2, &operator_2, &operand_3);
 
-    if (operator_2 != NOT_ASCII){
-        if (((operator_2 == '*') || (operator_2 == '/')) && (((operator_1 == '+') || (operator_1 == '-')))) {
-            switch (operator_2) {
-                case '/':
-                    if (operand_3 == 0) {
-                        fprintf(stderr, "operand 3 is zero\n");
-
-                        exit(1);
-                    }
-
-                    result = operand_2 / operand_3;
-                    break;
-                case '*':
-                    result = operand_2 * operand_3;
-                    break;
-                default:
-                    fprintf(stderr, "not arithmetic operator\n");
+    if (((operator_2 == '*') || (operator_2 == '/')) && (((operator_1 == '+') || (operator_1 == '-')))) {
+        switch (operator_2) {
+            case '/':
+                if (operand_3 == 0) {
+                    fprintf(stderr, "operand 3 is zero\n");
 
                     exit(1);
-            }
+                }
 
-            switch (operator_1) {
-                case '-':
-                    result = operand_1 - result;
-                    break;
-                case '+':
-                    result = operand_1 + result;
-                    break;
-                default:
-                    fprintf(stderr, "not arithmetic operator\n");
+                result = operand_2 / operand_3;
+                break;
+            case '*':
+                result = operand_2 * operand_3;
+                break;
+            default:
+                fprintf(stderr, "not arithmetic operator\n");
 
-                    exit(1);
-            }
-        }else{
-            switch (operator_1) {
-                case '+':
-                    result = operand_1 + operand_2;
-                    break;
-                case '-':
-                    result = operand_1 - operand_2;
-                    break;
-                case '*':
-                    result = operand_1 * operand_2;
-                    break;
-                case '/':
-                    if (operand_2 == 0) {
-                        fprintf(stderr, "operand 3 is zero\n");
-
-                        exit(1);
-                    }
-
-                    result = operand_1 / operand_2;
-                    break;
-                default:
-                    fprintf(stderr, "not arithmetic operator\n");
-
-                    exit(1);
-            }
-
-            switch (operator_2) {
-                case '+':
-                    result += operand_3;
-                    break;
-                case '-':
-                    result -= operand_3;
-                    break;
-                case '*':
-                    result *= operand_3;
-                    break;
-                case '/':
-                    if (operand_3 == 0) {
-                        fprintf(stderr, "operand 3 is zero\n");
-
-                        exit(1);
-                    }
-
-                    result /= operand_3;
-                    break;
-                default:
-                    fprintf(stderr, "not arithmetic operator\n");
-
-                    exit(1);
-            }
+                exit(1);
         }
-    }else if (operator_1 != NOT_ASCII)
+
+        switch (operator_1) {
+            case '-':
+                result = operand_1 - result;
+                break;
+            case '+':
+                result = operand_1 + result;
+                break;
+            default:
+                fprintf(stderr, "not arithmetic operator\n");
+
+                exit(1);
+        }
+    }else{
         switch (operator_1) {
             case '+':
                 result = operand_1 + operand_2;
@@ -513,12 +461,42 @@ void solveTextExpressionFile(const char* filename){
 
                 result = operand_1 / operand_2;
                 break;
+            case NOT_ASCII:
+                result = operand_1;
+                break;
             default:
                 fprintf(stderr, "not arithmetic operator\n");
 
                 exit(1);
-        }else
-            result = operand_1;
+        }
+
+        switch (operator_2) {
+            case '+':
+                result += operand_3;
+                break;
+            case '-':
+                result -= operand_3;
+                break;
+            case '*':
+                result *= operand_3;
+                break;
+            case '/':
+                if (operand_3 == 0) {
+                    fprintf(stderr, "operand 3 is zero\n");
+
+                    exit(1);
+                }
+
+                result /= operand_3;
+                break;
+            case NOT_ASCII:
+                break;
+            default:
+                fprintf(stderr, "not arithmetic operator\n");
+
+                exit(1);
+        }
+    }
 
     fseek(f, 0, SEEK_END);
     fprintf(f, " = %.2f", result);
