@@ -2069,6 +2069,56 @@ void test_fulfillQuery(){
     freeMemMatrix(&expected_m);
 }
 
+size_t countOfNeighbors(matrix m, int row, int col){
+    size_t count_of_neighbors = 0;
+
+    for (int i = row - 1; i < row + 2; i++)
+        for (int j = col - 1; j < col + 2; j++)
+            if ((i > -1 && i < m.nRows && j > -1 && j < m.nCols) && m.values[i][j] && (row != i || col != j))
+                count_of_neighbors++;
+
+    return count_of_neighbors;
+}
+
+bool isAlive(matrix m, int i, int j, size_t count_of_neighbors) {
+    return ((m.values[i][j] == 1 && (count_of_neighbors == 2 || count_of_neighbors == 3)) || (m.values[i][j] == 0 && count_of_neighbors == 3));
+}
+
+matrix live(matrix m){
+    matrix refreshedMatrix = getMemMatrix(m.nRows, m.nCols);
+
+    for (int i = 0; i < m.nRows; i++)
+        for (int j = 0; j < m.nCols; j++) {
+            size_t count_neighbors = countOfNeighbors(m, i, j);
+
+            refreshedMatrix.values[i][j] = isAlive(m, i, j, count_neighbors);
+        }
+
+    return refreshedMatrix;
+}
+
+void test_live(){
+    matrix m = createMatrixFromArray((int[]) {
+                                                 0, 1, 0,
+                                                 0, 0, 1,
+                                                 1, 1, 1,
+                                                 0, 0, 0},
+                                         4, 3);
+    matrix refreshedM = live(m);
+    matrix expected_m = createMatrixFromArray((int[]) {
+                                                    0, 0, 0,
+                                                    1, 0, 1,
+                                                    0, 1, 1,
+                                                    0, 1, 0},
+                                            4, 3);
+
+    assert(areTwoMatricesEqual(&refreshedM, &expected_m));
+
+    freeMemMatrix(&m);
+    freeMemMatrix(&refreshedM);
+    freeMemMatrix(&expected_m);
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
@@ -2082,6 +2132,7 @@ void testFile(){
     test_createBestTeamFile();
     test_refreshInformationFile();
     test_fulfillQuery();
+    test_live();
 }
 
 # endif
