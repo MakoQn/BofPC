@@ -2104,7 +2104,9 @@ void test_live(){
                                                  1, 1, 1,
                                                  0, 0, 0},
                                          4, 3);
+
     matrix refreshedM = live(m);
+
     matrix expected_m = createMatrixFromArray((int[]) {
                                                     0, 0, 0,
                                                     1, 0, 1,
@@ -2116,6 +2118,55 @@ void test_live(){
 
     freeMemMatrix(&m);
     freeMemMatrix(&refreshedM);
+    freeMemMatrix(&expected_m);
+}
+
+int compare(const void *arg1, const void *arg2){
+    return *(int *)arg1 - *(int *)arg2;
+};
+
+void getPixelsValue(int *a, matrix m, size_t row, size_t col){
+    size_t k = 0;
+
+    for (size_t i = row - 1; i < row + 2; i++){
+        for (size_t j = col - 1; j < col + 2; j++)
+            if (i != row || j != col)
+                a[k++] = m.values[i][j];
+    }
+
+    qsort(a, 8, sizeof(int), compare);
+}
+
+void medianFilter(matrix *m, size_t frame_size){
+    int frame[frame_size * frame_size - 1];
+
+    for (size_t i = 1; i < frame_size - 1; i++)
+        for (size_t j = 1; j < frame_size - 1; j++) {
+            getPixelsValue(frame, *m, i, j);
+            int median = (frame[frame_size] + frame[frame_size + 1]) / 2;
+
+            m->values[i][j] = median;
+        }
+}
+
+void test_medianFilter(){
+    matrix m = createMatrixFromArray((int[]){
+                                               10, 20, 30,
+                                               25, 35, 45,
+                                               15, 25, 35},
+                                       3, 3);
+
+    medianFilter(&m, 3);
+
+    matrix expected_m = createMatrixFromArray((int[]){
+                                                    10, 20, 30,
+                                                    25, 25, 45,
+                                                    15, 25, 35},
+                                            3, 3);
+
+    assert(areTwoMatricesEqual(&m, &expected_m));
+
+    freeMemMatrix(&m);
     freeMemMatrix(&expected_m);
 }
 
@@ -2133,6 +2184,7 @@ void testFile(){
     test_refreshInformationFile();
     test_fulfillQuery();
     test_live();
+    test_medianFilter();
 }
 
 # endif
