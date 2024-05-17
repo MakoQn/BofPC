@@ -12,6 +12,7 @@
 # define NOT_ASCII -1
 # define CHARACTERS 97
 # define MAX_LENGTH_STRING 200
+# define MAX_COUNT_OF_DOMAINS 200
 # define MAX_AMOUNT_SPORTSMAN 20
 
 void generateRandomSquareMatrixFile(const char *filename, size_t n) {
@@ -2170,6 +2171,75 @@ void test_medianFilter(){
     freeMemMatrix(&expected_m);
 }
 
+typedef struct domain{
+    size_t count_of_visits;
+    char name[MAX_LENGTH_STRING];
+} domain;
+
+size_t searchDomainInResults(const domain *r, size_t size, char *s) {
+    for(size_t i = 0; i < size; i++)
+        if (strcmp(r[i].name, s) == 0)
+            return i;
+
+    return size;
+}
+
+bool searchNumFromArray(const size_t *a, size_t length, size_t num) {
+    for (size_t i = 0; i < length; i++)
+        if (num == a[i])
+            return 1;
+
+    return 0;
+}
+
+void handlerDotPrtNotNull(domain *a, size_t i, char *dot, domain *r, size_t *size_r) {
+    strcpy(a[i].name, dot + 1);
+    size_t pos = searchDomainInResults(r, *size_r, a[i].name);
+
+    if (pos == *size_r){
+        r[*size_r] = a[i];
+        *size_r += 1;
+    }else
+        r[pos].count_of_visits += a[i].count_of_visits;
+}
+
+void outputDomains(domain *r, size_t size) {
+    for (size_t i = 0; i < size; i++)
+        printf("%d %s\n", r[i].count_of_visits, r[i].name);
+}
+
+void countOfVisits(domain *cpdomains, size_t size) {
+    domain r[MAX_COUNT_OF_DOMAINS];
+    size_t close_i[size];
+    size_t count_of_close = 0;
+    size_t size_r = 0;
+
+    for (size_t i = 0; i < size; i++)
+        r[size_r++] = cpdomains[i];
+
+    while (count_of_close != size)
+        for (size_t i = 0; i < size; i++)
+            if (!searchNumFromArray(close_i, count_of_close, i)){
+                char *dot = strchr(cpdomains[i].name, '.');
+
+                if (dot != NULL)
+                    handlerDotPrtNotNull(cpdomains, i, dot, r, &size_r);
+                else
+                    close_i[count_of_close++] = i;
+            }
+
+    outputDomains(r, size_r);
+}
+
+void test_countOfVisits(){
+    domain cpdomains[4] = {{900, "google.mail.com"},
+                           {50,  "yahoo.com"},
+                           {1,   "intel.mail.com"},
+                           {5,   "wiki.org"}};
+
+    countOfVisits(cpdomains, 4);
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
@@ -2185,6 +2255,7 @@ void testFile(){
     test_fulfillQuery();
     test_live();
     test_medianFilter();
+    test_countOfVisits();
 }
 
 # endif
