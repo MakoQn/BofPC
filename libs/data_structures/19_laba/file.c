@@ -2240,6 +2240,52 @@ void test_countOfVisits(){
     countOfVisits(cpdomains, 4);
 }
 
+size_t countOfSubmatrix(matrix m) {
+    matrix nums = getMemMatrix(m.nRows, m.nCols);
+    size_t count_of_submatrix = 0;
+
+    for (size_t i = 0; i < m.nRows; i++)
+        for (size_t j = 0; j < m.nCols; j++) {
+            if (m.values[i][j] == 1) {
+                if (i != 0)
+                    nums.values[i][j] = nums.values[i - 1][j] + 1;
+                else
+                    nums.values[i][j] = 1;
+            }else
+                nums.values[i][j] = 0;
+        }
+
+    for (size_t j = 0; j < m.nCols; j++)
+        for (size_t i = 0; i < m.nRows; i++)
+            for (size_t k = j + 1; k < m.nCols + 1; k++) {
+                int min = nums.values[i][j];
+
+                for (size_t l = j; l < k; l++)
+                    if (nums.values[i][l] < min)
+                        min = nums.values[i][l];
+
+                count_of_submatrix += min;
+            }
+
+    freeMemMatrix(&nums);
+
+    return count_of_submatrix;
+}
+
+void test_countOfSubmatrix(){
+    matrix m = createMatrixFromArray((int[]){
+                                              1, 0, 1,
+                                              1, 1, 0,
+                                              1, 1, 0},
+                                      3, 3);
+
+    size_t answer = countOfSubmatrix(m);
+
+    assert(answer == 13);
+
+    freeMemMatrix(&m);
+}
+
 //проводит автоматизированное тестирование функций
 void testFile(){
     test_squareMatrixFileTransponse();
@@ -2256,6 +2302,7 @@ void testFile(){
     test_live();
     test_medianFilter();
     test_countOfVisits();
+    test_countOfSubmatrix();
 }
 
 # endif
