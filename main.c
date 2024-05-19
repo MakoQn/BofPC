@@ -1,4 +1,5 @@
 # include <stdio.h>
+# include "E:\C23Exe\libs\data_structures\matrix\matrix.h"
 # include "E:\C23Exe\libs\data_structures\19_laba\file.h"
 # define MAX_COUNT_OF_DOMAINS 200
 # define MAX_LENGTH_STRING 200
@@ -299,6 +300,87 @@ void test_minStrNum(){
     assert(strcmp(got2, expected2) == 0);
 }
 
+typedef struct node {
+    int level;
+    int value;
+    int index;
+} node;
+
+void maxElement(int *a, int level, int begin, int end, int *index, vectorVoid *r) {
+    (*index)++;
+
+    if (end < begin) {
+        node n = {level, -1, *index};
+
+        pushBackV(r, &n);
+
+        return;
+    }
+
+    if (end == begin) {
+        node n = {level, a[end], *index};
+
+        pushBackV(r, &n);
+
+        return;
+    }
+
+    int max = INT_MIN;
+    int max_i;
+
+    for (int i = begin; i <= end; i++) {
+        if (max < a[i]) {
+            max = a[i];
+            max_i = i;
+        }
+    }
+
+    node n = {level, max, *index};
+
+    pushBackV(r, &n);
+
+    maxElement(a, level + 1, begin, max_i - 1, index, r);
+    maxElement(a, level + 1, max_i + 1, end, index, r);
+}
+
+int compareTreeItemByLevel(const void *nodeArg1, const void *nodeArg2) {
+    node *node1 = (node*)nodeArg1;
+    node *node2 = (node*)nodeArg2;
+    int diff = node1->level - node2->level;
+
+    if (diff == 0)
+        return node1->index - node2->index;
+
+    return diff;
+}
+
+vectorVoid breadthFirstSearch(int *nums, int l) {
+    vectorVoid r = createVectorV(9, sizeof(node));
+
+    int index = 0;
+
+    maxElement(nums, 0, 0, l - 1, &index, &r);
+    qsort(r.data, r.size, sizeof(node), compareTreeItemByLevel);
+
+    return r;
+}
+
+void test_breadthFirstSearch() {
+    int nums[] = {3, 2, 1, 6, 0, 5};
+
+    vectorVoid r = breadthFirstSearch(nums, 6);
+
+    for (int i = 0; i < r.size; i++) {
+        node n;
+
+        getVectorValueV(&r, i, &n);
+
+        printf("%d ", n.value);
+    }
+
+    deleteVectorV(&r);
+}
+
 int main() {
     test_fulfillQuery();
     test_live();
@@ -306,6 +388,7 @@ int main() {
     test_countOfVisits();
     test_countOfSubmatrix();
     test_minStrNum();
+    test_breadthFirstSearch();
 
     return 0;
 }
