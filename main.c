@@ -381,6 +381,35 @@ void test_breadthFirstSearch() {
     deleteVectorV(&r);
 }
 
+void reshuffling(const char *s, size_t length, const size_t *indexes, char *new_s) {
+    for (size_t i = 0; i < length; i++)
+        new_s[i] = s[indexes[i]];
+
+    new_s[length] = '\0';
+}
+
+void test_reshuffling(){
+    char s1[] = "abc";
+    size_t indexes1[] = {0, 1, 2};
+    char got1[3];
+
+    reshuffling(s1, 3, indexes1, got1);
+
+    char expected1[4] = "abc";
+
+    assert(strcmp(got1, expected1) == 0);
+
+    char s2[] = "abap";
+    size_t indexes2[] = {0, 3, 2, 1};
+    char got2[4];
+
+    reshuffling(s2, 4, indexes2, got2);
+
+    char expected2[5] = "apab";
+
+    assert(strcmp(got2, expected2) == 0);
+}
+
 int main() {
     test_fulfillQuery();
     test_live();
@@ -389,6 +418,7 @@ int main() {
     test_countOfSubmatrix();
     test_minStrNum();
     test_breadthFirstSearch();
+    test_reshuffling();
 
     return 0;
 }
