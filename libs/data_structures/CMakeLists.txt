@@ -10,6 +10,7 @@ add_library(data_structures
 	string/string_.h
 	19_laba/file.c
 	19_laba/file.h
+	20_laba/TASK9.с
 )
 
 target_link_libraries(data_structures algorithms)

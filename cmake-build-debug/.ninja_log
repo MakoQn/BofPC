@@ -1,8 +1,8 @@
 # ninja log v5
 2	56	7299871138671442	libs/data_structures/CMakeFiles/data_structures.dir/bitset/bitset.c.obj	5d1643cb133fab6e
 9	114	7293593812004653	libs/algorithms/CMakeFiles/algorithms.dir/algorithm.c.obj	fdcaa75d7ceb39
-2	80	7378354277802184	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-81	141	7378354278392697	C23Exe.exe	979e405cd230ce3a
+2	80	7378406641848494	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
+80	140	7378406642432667	C23Exe.exe	979e405cd230ce3a
 4	158	7372465147762505	libs/data_structures/CMakeFiles/data_structures.dir/string/string_.c.obj	67751483b14c1dee
 3	61	7163328292597986	CMakeFiles/C23Exe.dir/513A_game.c.obj	21c9d591fb1a2130
 2	79	7299924979140979	libs/data_structures/CMakeFiles/data_structures.dir/ordered_set/ordered_set.c.obj	a60f0f345cf5ea28
@@ -12,7 +12,7 @@
 4	66	7299908500378383	libs/data_structures/CMakeFiles/data_structures.dir/unordered_set/unordered_set.c.obj	ecf29bf83f62c830
 148	186	7377496488970724	libs/data_structures/libdata_structures.a	2e7edd192c3d137
 2	58	7305962607547394	libs/data_structures/CMakeFiles/data_structures.dir/vector/vector.c.obj	df9fbbd7eb0f7608
-0	72	7372322282293859	build.ninja	5c90ff11fe5481e0
+0	72	7379918568415285	build.ninja	5c90ff11fe5481e0
 3	63	7305965528388885	libs/data_structures/CMakeFiles/data_structures.dir/void_vector/void_vector.c.obj	73e870dc41bd9a88
 3	161	7372532708702709	libs/data_structures/CMakeFiles/data_structures.dir/matrix/matrix.c.obj	77e1fb317a827e0c
 5	224	7372317535883896	CMakeFiles/str.dir/string/string_.c.obj	44cf2739d14299f3
@@ -23,25 +23,3 @@
 2	69	7370579708087452	CMakeFiles/19laba.dir/19_laba/file.c.obj	9f63915a0ffa8d4d
 160	197	7370579362444534	libstring.a	56c0c3ec6f038be8
 4	145	7377496488545367	libs/data_structures/CMakeFiles/data_structures.dir/19_laba/file.c.obj	fe38c7f2a2901210
-2	77	7378371264689204	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-78	138	7378371265284720	C23Exe.exe	979e405cd230ce3a
-2	81	7378371729547173	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-82	143	7378371730147699	C23Exe.exe	979e405cd230ce3a
-2	78	7378371924618836	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-78	139	7378371925209349	C23Exe.exe	979e405cd230ce3a
-2	78	7378374533274107	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-78	138	7378374533859623	C23Exe.exe	979e405cd230ce3a
-2	79	7378374679796816	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-80	141	7378374680397328	C23Exe.exe	979e405cd230ce3a
-2	80	7378376431697893	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-80	141	7378376432293402	C23Exe.exe	979e405cd230ce3a
-2	78	7378377010799271	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-79	139	7378377011384779	C23Exe.exe	979e405cd230ce3a
-2	78	7378377049190861	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-78	139	7378377049776367	C23Exe.exe	979e405cd230ce3a
-2	78	7378380502938555	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-78	140	7378380503544085	C23Exe.exe	979e405cd230ce3a
-2	79	7378384043503170	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-80	141	7378384044098677	C23Exe.exe	979e405cd230ce3a
-3	78	7378384539240021	CMakeFiles/C23Exe.dir/main.c.obj	907f307f585ace47
-78	138	7378384539820524	C23Exe.exe	979e405cd230ce3a
