@@ -300,13 +300,13 @@ void test_minStrNum(){
     assert(strcmp(got2, expected2) == 0);
 }
 
-typedef struct node {
+typedef struct node{
     int level;
     int value;
     int index;
 } node;
 
-void maxElement(int *a, int level, int begin, int end, int *index, vectorVoid *r) {
+void maxElement(int *a, int level, int begin, int end, int *index, vectorVoid *r){
     (*index)++;
 
     if (end < begin) {
@@ -343,7 +343,7 @@ void maxElement(int *a, int level, int begin, int end, int *index, vectorVoid *r
     maxElement(a, level + 1, max_i + 1, end, index, r);
 }
 
-int compareTreeItemByLevel(const void *nodeArg1, const void *nodeArg2) {
+int compareTreeItemByLevel(const void *nodeArg1, const void *nodeArg2){
     node *node1 = (node*)nodeArg1;
     node *node2 = (node*)nodeArg2;
     int diff = node1->level - node2->level;
@@ -354,7 +354,7 @@ int compareTreeItemByLevel(const void *nodeArg1, const void *nodeArg2) {
     return diff;
 }
 
-vectorVoid breadthFirstSearch(int *nums, int l) {
+vectorVoid breadthFirstSearch(int *nums, int l){
     vectorVoid r = createVectorV(9, sizeof(node));
 
     int index = 0;
@@ -365,7 +365,7 @@ vectorVoid breadthFirstSearch(int *nums, int l) {
     return r;
 }
 
-void test_breadthFirstSearch() {
+void test_breadthFirstSearch(){
     int nums[] = {3, 2, 1, 6, 0, 5};
 
     vectorVoid r = breadthFirstSearch(nums, 6);
