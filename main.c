@@ -381,7 +381,7 @@ void test_breadthFirstSearch(){
     deleteVectorV(&r);
 }
 
-void reshuffling(const char *s, size_t length, const size_t *indexes, char *new_s) {
+void reshuffling(const char *s, size_t length, const size_t *indexes, char *new_s){
     for (size_t i = 0; i < length; i++)
         new_s[i] = s[indexes[i]];
 
@@ -410,6 +410,43 @@ void test_reshuffling(){
     assert(strcmp(got2, expected2) == 0);
 }
 
+void printReq(char **dict, char **req, int *num_req, int n, int q) {
+    int t = 0;
+    int t2 = 0;
+
+    for (int i = 0; i < q; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (strstr(dict[j], req[i]) != NULL) {
+                t++;
+                t2++;
+            } else
+                t++;
+
+            if (t2 == num_req[i]) {
+                printf("%d\n", t);
+                break;
+            }
+        }
+
+        if (num_req[i] > t2) {
+            printf("-1\n");
+            t = 0;
+            t2 = 0;
+        } else {
+            t = 0;
+            t2 = 0;
+        }
+    }
+}
+
+void test_printReq() {
+    char *d[] = {"aa", "aaa", "aab", "ab", "abc", "ac","ba", "daa", "dab", "dadba"};
+    char *req[] = {"a", "da", "da"};
+    int num_in_req[] = {4, 2, 4};
+
+    printReq(d, req, num_in_req, 10, 3);
+}
+
 int main() {
     test_fulfillQuery();
     test_live();
@@ -419,6 +456,7 @@ int main() {
     test_minStrNum();
     test_breadthFirstSearch();
     test_reshuffling();
+    test_printReq();
 
     return 0;
 }
