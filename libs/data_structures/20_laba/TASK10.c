@@ -24,7 +24,6 @@ void writeTextInFile(char *filename, char *text){
 
 FILE *f;
 int N;
-bool flag = 1;
 
 void printNLines(int param){
     char line[MAX_STRING_SIZE];
@@ -46,16 +45,17 @@ int main(int argc, char *argv[]){
 
     writeTextInFile(argv[1], "First\nSecond\nThird\nFourth");
 
-    signal(SIGINT, &printNLines);
-    N = atoi(argv[2]);
     f = fopen(argv[1], "r");
-    getchar();
 
     if (errno != 0) {
         fprintf(stderr, "lol Task 10 didnt open\n");
 
         exit(1);
     }
+
+    N = atoi(argv[2]);
+    signal(SIGINT, printNLines);
+    getchar();
 
     perror("Task 10 Read");
 
